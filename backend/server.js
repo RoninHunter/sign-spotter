@@ -23,24 +23,39 @@ app.get('/', async (req, res) => {
 });
 
 app.post('/api/videoupload', function (req, res) {
+  var response = [];
   try {
     let date = new Date();
-    let videos = req.files.videos;
-    console.log(req.body.email);
-    console.log(date.getTime());
+    let currentTime = date.getTime();
+    let videos = []
+    videos.push(req.files.videos)
+    console.log(videos);
     videos.forEach(saveVideos);
     function saveVideos(item, index) {
-      item.mv('./uploads/' + date.getTime() + '_' + item.name + '.mp4', function(err) {
+      let newPath = './uploads/' + currentTime + '_' + item.name + '.mp4';
+      item.mv(newPath, function(err) {
         if (err) {
           console.log(err);
+          response.push('Error saving file');
         }
       });
+      const spawn = require('child_process').spawn;
+      const pythonProcess = spawn('python', ['../cnn/labeler.py', item.name, req.body.email, currentTime]);
+      pythonProcess.stdout.on('data', function(data) {
+        response.push(data.toString());
+        res.json({
+          'upload': 'success',
+          'response': response
+        })
+      });
     }
-    res.json({'upload': 'success'});
   }
   catch (e) {
     console.log(e);
-    res.json({'upload': 'fail'});
+    res.json({
+      'upload': 'fail',
+      'response': response
+    });
   }
 });
 
