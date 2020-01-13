@@ -10,12 +10,10 @@ const port = process.env.PORT || 8081;
 var app = express();
 
 app.use(fileUpload());
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
   extended: true
 }));
-
 app.use(cors());
 
 app.get('/', async (req, res) => {
@@ -23,13 +21,19 @@ app.get('/', async (req, res) => {
 });
 
 app.post('/api/videoupload', function (req, res) {
-  var response = [];
   try {
     let date = new Date();
     let currentTime = date.getTime();
     let videos = []
-    videos.push(req.files.videos)
-    console.log(videos);
+
+    // Allows for 1 ore multiple videos to be processed, output is an array of videos
+    if (Array.isArray(req.files.videos)) {
+      videos = req.files.videos;
+    } else {
+      videos.push(req.files.videos);
+    }
+
+    // Iterates though each video and saves to uploads folder as well as calls the python script
     videos.forEach(saveVideos);
     function saveVideos(item, index) {
       let newPath = './uploads/' + currentTime + '_' + item.name + '.mp4';
@@ -39,33 +43,38 @@ app.post('/api/videoupload', function (req, res) {
           response.push('Error saving file');
         }
       });
+      // Spawns a child process to run python script
       const spawn = require('child_process').spawn;
-      const pythonProcess = spawn('python', ['../cnn/labeler.py', item.name, req.body.email, currentTime]);
+      const pythonProcess = spawn('python', ['../cnn/labeler.py', item.name, req.body.email, currentTime.toString()]);
       pythonProcess.stdout.on('data', function(data) {
-        response.push(data.toString());
-        res.json({
-          'upload': 'success',
-          'response': response
-        })
+        console.log(data.toString());
       });
     }
+    res.json({
+      'upload': 'success',
+    });
   }
   catch (e) {
     console.log(e);
     res.json({
       'upload': 'fail',
-      'response': response
     });
   }
 });
 
 app.post('/api/history', function (req, res) {
   try {
+    // Example response, needs to be replaced with actual connection to DB
     var test_response = {
       'history': [
         {
-          'url': 'url',
-          'name': 'name',
+          'video': 'url',
+          'name': 'video_1.mp4',
+          'labelsURL': 'url'
+        },
+        {
+          'video': 'url',
+          'name': 'video_2.mp4',
           'labelsURL': 'url'
         }
       ]
@@ -80,6 +89,7 @@ app.post('/api/history', function (req, res) {
 
 app.post('/api/locations', function (req, res) {
   try {
+    // Example response, needs to be replaced with actual connection to DB
     var test_response = {
       'locations': [
         {
