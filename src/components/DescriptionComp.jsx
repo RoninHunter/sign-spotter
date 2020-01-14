@@ -2,6 +2,12 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 
+import {useDropzone} from 'react-dropzone'
+import RootRef from '@material-ui/core/RootRef'
+
+
+
+
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -15,11 +21,18 @@ const useStyles = makeStyles(theme => ({
 export default function DescriptionComp() {
   const classes = useStyles();
 
+  const {getRootProps, getInputProps} = useDropzone()
+  const {ref, ...rootProps} = getRootProps()
+
   return (
     <div className={classes.root}>
-      <Paper elevation={3} />
-      <Paper />
-      <Paper elevation={3} />
+
+<RootRef rootRef={ref}>
+    <Paper  {...rootProps}>
+        <input {...getInputProps()} />
+        <p>Drag 'n' drop the video files here, or click to select the file</p>
+        </Paper>
+      </RootRef>
     </div>
   );
 }

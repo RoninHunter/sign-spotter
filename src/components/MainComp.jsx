@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import NavBar from './NavBar';
 import DescriptionComp from './DescriptionComp';
-//import {useDropzone} from 'react-dropzone';
+import {useDropzone} from 'react-dropzone';
 //import './App.css';
 
 
