@@ -6,6 +6,11 @@ Sign Spotter is designed as an asset managment application that allows users to 
 ![Labeled Sign Picture](https://raw.githubusercontent.com/RoninHunter/sign-spotter/master/public/Labeled_Pic.jpg "Labeled Sign Picture")
 
 ## Prerequisites
+\*On Windows, Python and ffmpeg should be added to the Windows Path
+
+    Python
+    ffmpeg
+
 
 ## Installation/Deployment
 Clone repository

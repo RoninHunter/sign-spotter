@@ -7,7 +7,7 @@ def main():
   time = arguements[3]
   message = 'Recieved video '+ video+ ' from '+ email + ' at ' + time
   print(message)
-  file = open('C:/Users/luisg/Documents/GitHub/sign-spotter/cnn/file.txt', 'w')
+  file = open('C:/Users/luisg/Documents/GitHub/sign-spotter/cnn/' + video + time + '.txt', 'w')
   file.write(message)
   file.close()
 
