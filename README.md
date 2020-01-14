@@ -14,14 +14,7 @@ Create .env file in the **backend** folder with the following variables
 
       PORT={port of choice}
 
-Terminal 1
+Terminal
 
-    cd sign-spotter
-    npm install
+    cd backend
     npm start
-
-Terminal 2
-
-    cd sign-spotter/backend
-    npm install
-    node server
