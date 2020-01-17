@@ -24,4 +24,4 @@ yarn-debug.log*
 yarn-error.log*
 backend/.env
 *.mp4
-cnn/file.txt
+cnn/*.txt
