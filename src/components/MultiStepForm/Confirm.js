@@ -16,6 +16,22 @@ export class Confirm extends Component {
     this.props.prevStep();
   };
 
+  fileList() {
+    if(this.props.values.files) {
+      const fileList = this.props.values.files.map(file => (
+        <li key={file.path}>
+          {file.path} - {file.size} bytes
+        </li>
+      ));
+      return(
+        <div>
+          {fileList}
+        </div>
+      )
+    }
+  }
+
+
   render() {
     const {
       values: { firstName, lastName, email, files}
@@ -30,6 +46,9 @@ export class Confirm extends Component {
           >
           <AppBar title="Confirm User Data" />
           <List>
+            <ListItem>
+              <ListItemText primary="Files" secondary={this.fileList()} />
+            </ListItem>
             <ListItem>
               <ListItemText primary="First Name" secondary={firstName} /> 
             </ListItem>

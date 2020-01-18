@@ -3,7 +3,7 @@ import FormUserDetails from './FormUserDetails';
 import FormPersonalDetails from './FormPersonalDetails';
 import Confirm from './Confirm';
 import Success from './Success';
-import { HomePage } from '../HomePage';
+// import { HomePage } from '../HomePage';
 import axios from 'axios';
 
 export class UserForm extends Component {
@@ -51,7 +51,9 @@ export class UserForm extends Component {
 
   submitForm = (event) => {
     const data = new FormData();
-    data.append('videos', this.state.files[0]);
+    this.state.files.forEach(file => {
+      data.append('videos', file);
+    });
     data.append('firstName', this.state.firstName);
     data.append('lastName', this.state.lastName);
     data.append('email', this.state.email);
