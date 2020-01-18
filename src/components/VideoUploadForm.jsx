@@ -1,36 +1,58 @@
-import React from 'react';
+import React, {Component} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
+// import Paper from '@material-ui/core/Paper';
+import Dropzone from 'react-dropzone';
 
-import {useDropzone} from 'react-dropzone'
+// import {useDropzone} from 'react-dropzone'
 import RootRef from '@material-ui/core/RootRef'
 
+class VideoUploadForm extends Component {
+  constructor(props) {
+    super(props)
+  
+    this.state = {
+      files: null
+    }
+  }
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    '& > *': {
-      margin: theme.spacing(10), width: theme.spacing(80), height: theme.spacing(12),
-    },
-  },
-}));
+  fileList() {
+    if(this.state.files) {
+      const fileList = this.state.files.map(file => (
+        <li key={file.path}>
+          {file.path} - {file.size} bytes
+        </li>
+      ));
+      return(
+        <div>
+          {fileList}
+        </div>
+      )
+    }
+  }
 
-export default function VideoUploadForm() {
-  const classes = useStyles();
+  onDrop = (acceptedFiles) => {
+    // console.log(acceptedFiles);
+    this.setState({
+      files: acceptedFiles
+    });
+    this.props.uploadVideo(acceptedFiles);
+  }
 
-  const {getRootProps, getInputProps} = useDropzone()
-  const {ref, ...rootProps} = getRootProps()
-
-  return (
-    <div className={classes.root}>
-
-<RootRef rootRef={ref}>
-    <Paper {...rootProps}>
-        <input {...getInputProps()} />
-        <p> Upload video by drag 'n' dropping your video file or click to select the file</p>
-        </Paper>
-      </RootRef>
-    </div>
-  );
+  render() {
+    return (
+      <div className="text-center mt-5">
+        <Dropzone onDrop={this.onDrop}>
+          {({getRootProps, getInputProps}) => (
+            <div {...getRootProps()}>
+              <input {...getInputProps()} />
+              Click me to upload a file!
+              {this.fileList()}
+            </div>
+          )}
+        </Dropzone>
+      </div>
+    );
+  }
 }
+
+export default VideoUploadForm;

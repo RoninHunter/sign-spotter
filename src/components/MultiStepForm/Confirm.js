@@ -7,8 +7,7 @@ import Button from '@material-ui/core/Button';
 
 export class Confirm extends Component {
   continue = e => {
-    e.preventDefault();
-    // PROCESS FORM //
+    this.props.submitForm();
     this.props.nextStep();
   };
 
@@ -19,7 +18,7 @@ export class Confirm extends Component {
 
   render() {
     const {
-      values: { firstName, lastName, email, occupation, city, bio }
+      values: { firstName, lastName, email, files}
     } = this.props;
     return (
       <MuiThemeProvider >
@@ -40,15 +39,6 @@ export class Confirm extends Component {
             <ListItem>
               <ListItemText primary="Email" secondary={email} /> 
             </ListItem>
-            {/* <ListItem>
-               <ListItemText primary="Occupation" secondary={occupation} /> 
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="City" secondary={city} /> 
-            </ListItem>
-            <ListItem>
-              <ListItemText primary="Bio" secondary={bio} /> 
-            </ListItem>  */}
           </List>
           <br />
         

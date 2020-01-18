@@ -25,20 +25,9 @@ export class HomePage extends Component {
 
   render() {
     return (
-      <MuiThemeProvider > 
-        <React.Fragment>
-        <Dialog 
-            open="true"
-            fullWidth="true"
-            maxWidth='sm'
-          >
-             <NavBar />
-            <AppBar title="HomePage" />
-            <h1> SignSPOTTER </h1>
-            <p> Sign spotting for life </p>
-          </Dialog>
-        </React.Fragment>
-      </MuiThemeProvider>
+      <div>
+        <h1>Home</h1>
+      </div>
     );
   }
 }

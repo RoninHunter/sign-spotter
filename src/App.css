@@ -1,5 +1,29 @@
+.App {
+  background-image: url(./components/Images/M8jWnf1.jpg);
+  height: 100vh;
+  width: 100vw;
+  background-size: cover;
+  position: relative;
+  display: block;
+  color: rgba(255, 255, 255, 1)
+}
 
-/*
+.navbar {
+  width: 100%;
+}
+
+.darkenBackground {
+  background: rgba(0, 0, 0, 0.8);
+  height: 100vh;
+  width: 100vw;
+}
+
+.uploadBox {
+  display: 'flex';
+  flex-wrap: 'wrap';
+}
+
+/* 
 .App {
   text-align: center;
   background-color: rgb(206, 213, 223);
