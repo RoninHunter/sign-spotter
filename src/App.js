@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import NavBar from './components/NavBar';
 import UserForm from './components/MultiStepForm/UserForm';
 import Home from './components/HomePage';
-import About from './components/about';
+import About from './components/About';
 
 import {BrowserRouter, Switch, Route, Redirect} from "react-router-dom";
 
@@ -18,9 +18,9 @@ class App extends Component {
           <BrowserRouter>
             <div>
               <Switch>
-                <Route path="/home" component={Home} />
-                <Route path="/about" component={About} />
-                <Route path="/userForm" component={UserForm}/>
+                <Route path  = "/home"     component={Home} />
+                <Route path  = "/about"    component={About} />
+                <Route path  = "/userForm" component={UserForm}/>
                 <Redirect to = "/home" />
               </Switch>
             </div>

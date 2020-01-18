@@ -3,10 +3,19 @@ import React, { Component } from 'react';
 class About extends Component {
   render() {
     return (
+
+      <div style={{
+        fontFamily: 'Helvetica',
+       //display: 'flex', 
+       textAlign: 'left',
+       textJustify: 'auto',
+       padding: '110px',
+       lineHeight: '25px'
+     }}>
       <div>
-        <div style={{display: 'flex', justifyContent: 'center'}}>
+        {/* <div style={{display: 'flex', justifyContent: 'center'}}> */}
           <h1>About</h1>
-        </div>
+        {/* </div> */}
         <div>
           <p>
             Various applications have shown the promise that Deep Neural Networks allot. This peeked our interest and led to the developement of this application which makes use of convolutional neural networks for classification of traffic signs.
@@ -25,6 +34,7 @@ class About extends Component {
             Pending update
           </p>
         </div>
+      </div>
       </div>
     );
   }
