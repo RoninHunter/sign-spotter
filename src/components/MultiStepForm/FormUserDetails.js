@@ -29,6 +29,7 @@ export class FormUserDetails extends Component {
     this.props.nextStep();
   };
 
+  
   render() {
     const { values, handleChange } = this.props;
     return (
@@ -53,10 +54,7 @@ export class FormUserDetails extends Component {
                 </Typography>
               </Paper>
 
-
-
-              {/* <DescriptionComp /> */}
-              <VideoUploadForm />
+              <VideoUploadForm uploadVideo={this.props.uploadVideo} />
 
 
               <AppBar title="Enter User Details" />

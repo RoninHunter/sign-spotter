@@ -21,6 +21,8 @@ app.get('/', async (req, res) => {
 });
 
 app.post('/api/videoupload', function (req, res) {
+  console.log(req.files);
+  console.log(req.body);
   try {
     let date = new Date();
     let currentTime = date.getTime();
