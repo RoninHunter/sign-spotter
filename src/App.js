@@ -6,8 +6,9 @@ import MainComp from './components/MainComp';
 
 import NavBar from './components/NavBar';
 
-import { UserForm } from './components/MultiStepForm/UserForm';
-import { HomePage } from './components/HomePage';
+import UserForm from './components/MultiStepForm/UserForm';
+//import { HomePage } from './components/HomePage';
+import About from './components/About';
 
 import Image from 'react-bootstrap/Image'
 
@@ -72,15 +73,15 @@ class App extends Component {
 export default App;
 
 
-function Home() {
-  return <h2>Home</h2>;
-}
+// function Home() {
+//   return <h2>Home</h2>;
+// }
 
 
-function About() {
-  return <h2>About</h2>;
-}
+// function Aboutmenu() {
+//   return <h2>About</h2>;
+// }
 
-function VideoUpload() {
-  return <h2>Video Upload</h2>;
-}
+// function VideoUpload() {
+//   return <h2>Video Upload</h2>;
+// }
