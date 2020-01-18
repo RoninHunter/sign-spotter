@@ -1,5 +1,5 @@
-/*
 
+/*
 .App {
   text-align: center;
   background-color: rgb(206, 213, 223);
@@ -11,9 +11,9 @@
   font-size: calc(10px + 2vmin);
 }
 
-*/
 
-#apppage .gradient {
+
+.App .gradient {
   background: -moz-linear-gradient(
     45deg,
     rgba(42, 27, 161, 0.7),
@@ -42,7 +42,7 @@
   );
 }
 
-#apppage .view {
+.App .view {
   background-image: url("https://mdbootstrap.com/img/Photos/Others/architecture.jpg");
   background-repeat: no-repeat;
   background-size: cover;
@@ -50,12 +50,12 @@
   min-height: 100vh;
 }
 
-#apppage h6 {
+.App h6 {
   line-height: 1.7;
 }
 
 @media only screen and (max-width: 400px) {
-  #apppage .animated img {
+  #app .animated img {
     max-height: 50vh;
     transform: translateX(-50%);
     left: 50%;
@@ -63,7 +63,7 @@
   }
 }
 @media only screen and (max-width: 767px) {
-  #apppage .animated img {
+  .App .animated img {
     max-height: 35vh;
     transform: translateX(-50%);
     left: 50%;
@@ -71,7 +71,7 @@
 }
 
 @media (max-width: 767px) and (orientation: landscape) {
-  #apppage .animated img {
+  .App .animated img {
     max-height: 50vh;
     transform: translateX(-50%);
     left: 50%;
@@ -79,7 +79,9 @@
   }
 }
 @media (max-width: 1000px) and (orientation: landscape) {
-  #apppage .view {
+  .App .view {
     min-height: 150vh;
   }
 }
+
+*/

@@ -1,23 +1,21 @@
 import React, { Component } from 'react';
 import NavBar from './NavBar';
-import DescriptionComp from './DescriptionComp';
+import VideoUploadForm from './VideoUploadForm';
 import {useDropzone} from 'react-dropzone';
 //import './App.css';
 
 
 
-class BackgroundComp extends Component {
+class MainComp extends Component {
   
   render() {
     return (
       <div 
       className = "BackgroundComp">
-
-        <NavBar />
-        <DescriptionComp /> 
-
+        {/* <NavBar /> */}
+        {/* <videoUploadForm /> */}
       </div>
     );
   }
 }
-export default BackgroundComp;
+export default MainComp;

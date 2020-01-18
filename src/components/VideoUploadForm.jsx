@@ -6,19 +6,17 @@ import {useDropzone} from 'react-dropzone'
 import RootRef from '@material-ui/core/RootRef'
 
 
-
-
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
     flexWrap: 'wrap',
     '& > *': {
-      margin: theme.spacing(1), width: theme.spacing(16), height: theme.spacing(16),
+      margin: theme.spacing(10), width: theme.spacing(80), height: theme.spacing(12),
     },
   },
 }));
 
-export default function DescriptionComp() {
+export default function VideoUploadForm() {
   const classes = useStyles();
 
   const {getRootProps, getInputProps} = useDropzone()
@@ -28,9 +26,9 @@ export default function DescriptionComp() {
     <div className={classes.root}>
 
 <RootRef rootRef={ref}>
-    <Paper  {...rootProps}>
+    <Paper {...rootProps}>
         <input {...getInputProps()} />
-        <p>Drag 'n' drop the video files here, or click to select the file</p>
+        <p> Upload video by drag 'n' dropping your video file or click to select the file</p>
         </Paper>
       </RootRef>
     </div>
