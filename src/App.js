@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import NavBar from './components/NavBar';
-import UserForm from './components/MultiStepForm/UserForm';
+import UserForm from './components/UserForm';
 import Home from './components/HomePage';
 import About from './components/About';
 

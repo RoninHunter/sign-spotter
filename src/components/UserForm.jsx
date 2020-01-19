@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
-import FormUserDetails from './FormUserDetails';
-import FormPersonalDetails from './FormPersonalDetails';
-import Confirm from './Confirm';
-import Success from './Success';
+import FormUserDetails from './MultiStepForm/FormUserDetails';
+import FormPersonalDetails from './MultiStepForm/FormPersonalDetails';
+import Confirm from './MultiStepForm/Confirm';
+import Success from './MultiStepForm/Success';
 // import { HomePage } from '../HomePage';
 import axios from 'axios';
 

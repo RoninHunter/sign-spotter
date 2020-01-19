@@ -5,7 +5,7 @@ import AppBar from '@material-ui/core/AppBar';
 import MuiThemeProvider from '@material-ui/core/styles/MuiThemeProvider';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
-import VideoUploadForm from '../VideoUploadForm';
+import VideoUploadForm from './VideoUploadForm';
 import { Card } from 'react-bootstrap';
 import { Paper } from '@material-ui/core';
 //import MainComp from '../components/MainComp';
