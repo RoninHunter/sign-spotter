@@ -62,7 +62,7 @@ export class UserForm extends Component {
         'content-type': 'multipart/form-data'
       }
     }
-    axios.post('http://localhost:3000/:8080/api/videoupload', data, config).then(res => {
+    axios.post('http://localhost:8080/api/videoupload', data, config).then(res => {
       console.log(res);
     });
   }
