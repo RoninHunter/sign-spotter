@@ -1,10 +1,9 @@
 import React, {Component} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-// import Paper from '@material-ui/core/Paper';
 import Dropzone from 'react-dropzone';
-
+// import { makeStyles } from '@material-ui/core/styles';
+// import Paper from '@material-ui/core/Paper';
 // import {useDropzone} from 'react-dropzone'
-import RootRef from '@material-ui/core/RootRef'
+// import RootRef from '@material-ui/core/RootRef'
 
 class VideoUploadForm extends Component {
   constructor(props) {

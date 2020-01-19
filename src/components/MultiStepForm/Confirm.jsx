@@ -34,7 +34,7 @@ export class Confirm extends Component {
 
   render() {
     const {
-      values: { firstName, lastName, email, files}
+      values: { firstName, lastName, email}
     } = this.props;
     return (
       <MuiThemeProvider >

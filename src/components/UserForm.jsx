@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import FormUserDetails from './MultiStepForm/FormUserDetails';
-import FormPersonalDetails from './MultiStepForm/FormPersonalDetails';
+// import FormPersonalDetails from './MultiStepForm/FormPersonalDetails';
 import Confirm from './MultiStepForm/Confirm';
 import Success from './MultiStepForm/Success';
 // import { HomePage } from '../HomePage';
@@ -94,6 +94,12 @@ export class UserForm extends Component {
         );
       case 3:
         return <Success />;
+      default:
+        return (
+          <div>
+            <p>Error</p>
+          </div>
+        );
     }
   }
 }

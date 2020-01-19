@@ -2,6 +2,7 @@ var express = require('express');
 var cors = require('cors');
 var bodyParser = require('body-parser');
 var fileUpload = require('express-fileupload');
+var fs = require('fs');
 
 require('dotenv').config();
 
@@ -16,13 +17,16 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(cors());
 
+// Creates uploads directory; needed for uploading video to backend
+if (!fs.existsSync('./uploads/')) {
+  fs.mkdirSync('./uploads')
+}
+
 app.get('/', async (req, res) => {
   res.send('Server online!');
 });
 
 app.post('/api/videoupload', function (req, res) {
-  console.log(req.files);
-  console.log(req.body);
   try {
     let date = new Date();
     let currentTime = date.getTime();
@@ -58,7 +62,7 @@ app.post('/api/videoupload', function (req, res) {
   }
   catch (e) {
     console.log(e);
-    res.json({
+    res.statusCode(400).json({
       'upload': 'fail',
     });
   }

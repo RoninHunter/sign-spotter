@@ -16,14 +16,12 @@ class App extends Component {
         <div className="darkenBackground">
           <NavBar/>
           <BrowserRouter>
-            <div>
-              <Switch>
-                <Route path  = "/home"     component={Home} />
-                <Route path  = "/about"    component={About} />
-                <Route path  = "/userForm" component={UserForm}/>
-                <Redirect to = "/home" />
-              </Switch>
-            </div>
+            <Switch>
+              <Route path  = "/home"     component={Home} />
+              <Route path  = "/about"    component={About} />
+              <Route path  = "/userForm" component={UserForm}/>
+              <Redirect to = "/home" />
+            </Switch>
           </BrowserRouter>
         </div>
       </div>
