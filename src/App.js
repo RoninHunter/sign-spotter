@@ -1,31 +1,34 @@
 import React, { Component } from 'react';
+
 import NavBar from './components/NavBar';
+import UserForm from './components/UserForm';
+import Home from './components/HomePage';
+import About from './components/About';
+
+import {BrowserRouter, Switch, Route, Redirect} from "react-router-dom";
+
 import './App.css';
 
-
-class App extends Component {
+class App extends Component {  
   render() {
     return (
-
-
-      <div 
-      
-      // style = {{backgroundColor: '#2a2a2a',
-        //        width: '1920px',
-          //      height: '1080px'}}
-      
-      className="App">
-
-
-        <NavBar />
-
-        {/* <h1>Hello World!</h1> */}
-
-        <p> Sign Spotter is designed as an asset managment application that allows users to identify missing traffic signs. 
-          It is able to accomplish this through the use of a convolutional neural network that identifies the signs from user uploaded videos.</p>
-
+      <div className="App">
+        <div className="darkenBackground">
+          <NavBar/>
+          <BrowserRouter>
+            <div>
+              <Switch>
+                <Route path  = "/home"     component={Home} />
+                <Route path  = "/about"    component={About} />
+                <Route path  = "/userForm" component={UserForm}/>
+                <Redirect to = "/home" />
+              </Switch>
+            </div>
+          </BrowserRouter>
+        </div>
       </div>
     );
   }
 }
+
 export default App;
