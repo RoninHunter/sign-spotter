@@ -15,14 +15,16 @@ class App extends Component {
       <div className="App">
         <div className="darkenBackground">
           <NavBar/>
-          <BrowserRouter>
-            <Switch>
-              <Route path  = "/home"     component={Home} />
-              <Route path  = "/about"    component={About} />
-              <Route path  = "/userForm" component={UserForm}/>
-              <Redirect to = "/home" />
-            </Switch>
-          </BrowserRouter>
+          <div className="content">
+            <BrowserRouter>
+              <Switch>
+                <Route path  = "/home"     component={Home} />
+                <Route path  = "/about"    component={About} />
+                <Route path  = "/userForm" component={UserForm}/>
+                <Redirect to = "/home" />
+              </Switch>
+            </BrowserRouter>
+          </div>
         </div>
       </div>
     );

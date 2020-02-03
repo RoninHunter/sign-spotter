@@ -1,14 +1,21 @@
 .App {
   background-image: url('/background.jpg');
-  height: 100vh;
-  width: 100vw;
+  /* height: 100vh;
+  width: 100vw; */
   background-size: cover;
   margin: 0 auto;
+  /* padding-left: 110px; */
   /* position: relative; */
   display: block;
   color: rgb(255, 255, 255);
   /* padding-left: 10%; */
   /* padding-top: 10%; */
+}
+
+.content {
+  /* width: 800px; */
+  padding: 300px;
+  padding-top: 60px;
 }
 
 .navbar {
@@ -17,9 +24,8 @@
 
 .darkenBackground {
   background: rgba(0, 0, 0, 0.8);
-  /* padding-left: 10%; */
   height: 100vh;
-  width: 50vw;
+  width: 100vw; 
   margin: 0 auto;
 
   /* position: relative;

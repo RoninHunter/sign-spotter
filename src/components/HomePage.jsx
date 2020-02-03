@@ -19,27 +19,23 @@ export class HomePage extends Component {
   render() {
     return (
 
-      <div style={{
-           fontFamily: 'Helvetica',
-          //display: 'flex', 
-          textAlign: 'left',
-          textJustify: 'auto',
-          padding: '110px',
-          lineHeight: '25px'
-        }}>
-
-      <h1>SignSPOTTER</h1>
-
-         <p>
-           {/* <b>SignSPOTTER </b>  */}
-          A tool that allows its users to upload videos for object detection labeling, 
-          specifically traffic signs. Users will receive an email after the video is 
-          processed to download the labeled data. The app will also allow the user to 
-          export data as a KMZ and allow for asset managment capablilities such as 
-          determining if signs are missing from two video files of the same location.
-        </p>
-
-      
+      // <div style={{
+      //      fontFamily: 'Helvetica',
+      //     //display: 'flex', 
+      //     textAlign: 'left',
+      //     textJustify: 'auto',
+      //     padding: '110px',
+      //     lineHeight: '25px'
+      //   }}>
+      <div>
+        <h1>SignSPOTTER</h1>
+          <p>
+            A tool that allows its users to upload videos for object detection labeling, 
+            specifically traffic signs. Users will receive an email after the video is 
+            processed to download the labeled data. The app will also allow the user to 
+            export data as a KMZ and allow for asset managment capablilities such as 
+            determining if signs are missing from two video files of the same location.
+          </p>
       </div>
     );
   }
