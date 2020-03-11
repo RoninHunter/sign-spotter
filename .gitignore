@@ -25,3 +25,5 @@ yarn-error.log*
 backend/.env
 *.mp4
 cnn/*.txt
+.sign-spotter/
+.vscode/
