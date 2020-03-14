@@ -27,3 +27,4 @@ backend/.env
 cnn/*.txt
 .sign-spotter/
 .vscode/
+*.pyc
