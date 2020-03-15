@@ -9,6 +9,7 @@ def gps_list(filename):
     # TODO: extract gps info from video file and convert to json object
     placeholder = {1: {
         'latitude': 10.00,
-        'longitude': 20.00
+        'longitude': 20.00,
+        'bearing': 90
     }}
     return placeholder

@@ -30,6 +30,7 @@ def main():
           label['original_filename'] = video_filename
           label['latitude'] = gps_list[image['frame']]['latitude']
           label['longitude'] = gps_list[image['frame']]['longitude']
+          label['bearing'] = gps_list[image['frame']]['bearing']
           label['user_email'] = email
           label['upload_time'] = upload_time
         scripts.save_to_mongo(labels)
