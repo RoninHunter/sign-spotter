@@ -1,7 +1,7 @@
 def split_video(filename, output_dir):
 
     # TODO: split video into individual files
-    placeholder = [{'path': '/test/path', 'frame': 1}]
+    placeholder = [{'path': '/home/egm42/sign-spotter/cnn/jpegs/60.png', 'frame': 1}]
     return placeholder
 
 def gps_list(filename):

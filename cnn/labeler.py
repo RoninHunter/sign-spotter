@@ -18,6 +18,9 @@ def main():
 
   gps_list = scripts.gps_list(video_filename)
 
+  # Creates a class for the DB data will be saved to
+  db = scripts.DB('labels')
+
   if(gps_list):
     jpeg_list = scripts.split_video(video_filename, jpeg_dir)
 
@@ -27,13 +30,13 @@ def main():
       if(labels):
         for label in labels:
           label['frame'] = image['frame']
-          label['original_filename'] = video_filename
+          label['original_video_filename'] = video_filename
           label['latitude'] = gps_list[image['frame']]['latitude']
           label['longitude'] = gps_list[image['frame']]['longitude']
           label['bearing'] = gps_list[image['frame']]['bearing']
           label['user_email'] = email
           label['upload_time'] = upload_time
-        scripts.save_to_mongo(labels)
+        db.save_to_mongo(labels, image['path'])
       else:
         # TODO: image should still be saved to DB
         print('no labels')

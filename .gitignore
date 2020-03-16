@@ -28,3 +28,4 @@ cnn/*.txt
 .sign-spotter/
 .vscode/
 *.pyc
+*.png
