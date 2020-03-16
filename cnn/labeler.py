@@ -1,15 +1,47 @@
 import sys
+import labeler_scripts as scripts
+import os
+import datetime
 
 def main():
-  arguements = sys.argv
-  video = arguements[1]
-  email = arguements[2]
-  time = arguements[3]
-  message = 'Recieved video '+ video+ ' from '+ email + ' at ' + time
-  print(message)
-  file = open('../cnn/' + video + time + '.txt', 'w')
-  file.write(message)
-  file.close()
+  jpeg_dir = os.path.join(os.path.dirname(__file__),'jpegs')
+
+  # arguements = sys.argv
+  # video_filename = arguements[1]
+  # email = arguements[2]
+  # upload_time = arguements[3]
+
+  # Temporary
+  video_filename = '/path/to/video'
+  email = 'test@email.com'
+  upload_time = datetime.datetime.now()
+
+  gps_list = scripts.gps_list(video_filename)
+
+  # Creates a class for the DB data will be saved to
+  db = scripts.DB('labels')
+
+  if(gps_list):
+    jpeg_list = scripts.split_video(video_filename, jpeg_dir)
+
+    
+    for image in jpeg_list:
+      labels = scripts.label(image['path'])
+      if(labels):
+        for label in labels:
+          label['frame'] = image['frame']
+          label['original_video_filename'] = video_filename
+          label['latitude'] = gps_list[image['frame']]['latitude']
+          label['longitude'] = gps_list[image['frame']]['longitude']
+          label['bearing'] = gps_list[image['frame']]['bearing']
+          label['user_email'] = email
+          label['upload_time'] = upload_time
+        db.save_to_mongo(labels, image['path'])
+      else:
+        # TODO: image should still be saved to DB
+        print('no labels')
+  else:
+    scripts.send_email('no_gps', email)
 
 if __name__ == '__main__':
   main()
