@@ -17,12 +17,14 @@ class DB():
         self.coll = self.db[collection]
         self.fs = gridfs.GridFS(self.db)
 
-    def save_to_mongo(self, labels, image_path):
+    def save_to_mongo(self, labels):
         # fs.put saves image using GridFS; it returns an ID that is used to associate the uploaded image to the labels that are being saved
         # TODO: make filetype match the file being uploaded
-        image_id = self.fs.put(open(image_path, 'rb'), filename=image_path, filetype='jpeg')
+        
         
         for label in labels:
+            image_path = label['image_path']
+            image_id = self.fs.put(open(image_path, 'rb'), filename=image_path, filetype='jpeg')
             label['image_id'] = image_id
         self.coll.insert_many(labels)
         print('Labels saved to DB')
