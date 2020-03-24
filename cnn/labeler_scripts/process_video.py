@@ -90,8 +90,6 @@ def gps_list(filename, fps):
     return placeholder
 
 def frames(filename, fps):
-    filename = '/home/egm42/sign-spotter/backend/uploads/1584227441905_REC_2019_11_14_04_10_49_F.mp4'
-
     print(ffmpeg.probe(filename))
     return round(float(ffmpeg.probe(filename)['streams'][0]['duration'])*fps)
 
@@ -103,4 +101,4 @@ if __name__ == '__main__':
 
     # print(a)
     
-    print(frames('',0))
+    print(frames('',10))
