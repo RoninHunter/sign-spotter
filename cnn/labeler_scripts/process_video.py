@@ -154,8 +154,7 @@ def gps_list(filename, fps):
                 day   = dateStr[0:2]
                 month = dateStr[2:4]
                 year  = dateStr[4:]
-
-
+                
                 #                                  1           3            5            7             8                      
                 #                            frameIndex,     seconds,    latitude,   longitude,    velocity,      azimuth, day, month, year)
                 jsonGPSlist = json_GPSobj(current_Frame, lineList[1], lineList[3], lineList[5], lineList[7],  lineList[8], day, month, year)
