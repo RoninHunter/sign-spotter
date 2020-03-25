@@ -2,6 +2,8 @@ var express = require('express');
 var cors = require('cors');
 var bodyParser = require('body-parser');
 var fileUpload = require('express-fileupload');
+var mongoose = require('mongoose');
+var Signs = require('./models/signs');
 
 require('dotenv').config();
 
@@ -15,6 +17,13 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(cors());
+
+mongoose.connect(process.env.MLAB_URI, {
+  useCreateIndex: true,
+  useFindAndModify: false,
+  useNewUrlParser: true
+});
+mongoose.connection.on('error', console.error.bind(console, 'connection error: '));
 
 app.get('/', async (req, res) => {
   res.send('Server online!');
@@ -87,6 +96,14 @@ app.post('/api/history', function (req, res) {
     console.log(e);
     res.json({'history': null});
   }
+});
+
+app.get('/api/locations', function (req, res) {
+  console.log('testing');
+  Signs.findOne(function(err, signs) {
+    console.log(signs);
+    res.send(signs);
+  });
 });
 
 app.post('/api/locations', function (req, res) {

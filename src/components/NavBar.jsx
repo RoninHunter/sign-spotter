@@ -1,12 +1,5 @@
 import React, { Component } from 'react';
-import { Navbar, 
-  Nav,
-  NavLink, 
-  //NavDropdown, 
-  //Form, 
-  //FormControl, 
-  //Button 
-} from 'react-bootstrap';
+import { Navbar, Nav} from 'react-bootstrap';
 
 class NavBar extends Component {
   render() {
@@ -19,6 +12,7 @@ class NavBar extends Component {
             <Nav className = "mr-auto">
               <Nav.Link href = "userForm"> Upload Video </Nav.Link>
               <Nav.Link href = "about"> About </Nav.Link>
+              <Nav.Link href = "signsMap"> Signs Map </Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Navbar>
