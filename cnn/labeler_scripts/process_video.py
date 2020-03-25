@@ -29,6 +29,7 @@ def split_video(filename, output_dir, fps):
 
 
 
+
 def lineFrameCount(lineStr,lineSubStr):
     total = Counter([lineStr[i: i+len(lineSubStr)] for i in range(len(lineStr))])
     return total[lineSubStr]
@@ -46,7 +47,6 @@ def longConverter(lat):
     headDigits = lat[0:3]
     value = lat[3:] 
     return (float(value)/60) + float(headDigits)
-
 
 
 # GPS class for bundling gps frame data
@@ -126,22 +126,23 @@ def gps_list(filename, fps):
             gpsInfoSlice = line[line.find("GPRMC"):len(line)-8] 
 
             if(gpsInfoSlice):
-                print(gpsInfoSlice)
+                # Take a look at the original gps frame slices
+                # print(gpsInfoSlice)
+
                 # GPSplace.append(line.find("GPRMC"))
 
                 lineList = gpsInfoSlice.split(",")
                 print(' ')
-                print(lineList)
-                print(' ')
+                # print(lineList)
 
 
                 latTemp = str(latConverter(lineList[3]))
                 lineList[3] = latTemp[0:9] + ' ' + lineList[4]
-                print(lineList[3])
+                # print(lineList[3])
 
                 longTemp = str(longConverter(lineList[5]))
                 lineList[5] = longTemp[0:9] + ' ' + lineList[6]
-                print(lineList[5])
+                # print(lineList[5])
 
 
                 dateStr = ''
@@ -154,7 +155,7 @@ def gps_list(filename, fps):
                 day   = dateStr[0:2]
                 month = dateStr[2:4]
                 year  = dateStr[4:]
-                
+
                 #                                  1           3            5            7             8                      
                 #                            frameIndex,     seconds,    latitude,   longitude,    velocity,      azimuth, day, month, year)
                 jsonGPSlist = json_GPSobj(current_Frame, lineList[1], lineList[3], lineList[5], lineList[7],  lineList[8], day, month, year)
