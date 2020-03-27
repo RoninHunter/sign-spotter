@@ -11,7 +11,6 @@ load_dotenv(dotenv_path=env_path)
 
 class DB():
     def __init__(self, collection):
-        print(collection)
         self.client = pymongo.MongoClient(os.getenv('MLAB_URI'), retryWrites = False)
         self.db = self.client.get_default_database()
         self.coll = self.db[collection]

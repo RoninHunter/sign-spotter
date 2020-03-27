@@ -66,25 +66,20 @@ def main():
           if side in sign_matrix[sign][frame_num].keys():
             sightings += 1
             last_sighting = frame_num
-            # print('------------------------------------')
-            # print('\t'+sign)
-            # print('\t'+str(frame_num))
-            # print('\t'+str(sign_matrix[sign][frame_num]))
-            # print('\t'+side)
-            # print('\t'+str(sign_matrix[sign][frame_num][side]))
           else:
             blanks += 1
             if(blanks >= 2 and sightings >= 1):
               save_label(last_sighting, labels, side)
+              sightings = 0
               last_sighting = 0
         else:
           blanks += 1
           if(blanks >= 2 and sightings >= 1):
             save_label(last_sighting, labels, side)
+            sightings = 0
             last_sighting = 0
       if(sightings >= 1 and last_sighting != 0):
         save_label(last_sighting, labels, side)
-
 
   # for label in labels:
   #   print('---------------------------------------------------------------')
@@ -96,14 +91,10 @@ def main():
 
 def save_label(last_sighting, labels, side):
   signs_db = scripts.DB('signs')
-  
-  # print('**************'+str(last_sighting))
-  # print('**************'+str(side))
+
   if(side == 'left'):
-    # print('**************'+str(labels[last_sighting*2 - 2]))
     signs_db.save_to_mongo([labels[last_sighting * 2 - 2]])
   else:
-    # print('**************'+str(labels[last_sighting*2 - 1]))
     signs_db.save_to_mongo([labels[last_sighting * 2 - 1]])
 
 
