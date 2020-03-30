@@ -15,6 +15,7 @@ class DB():
         self.db = self.client.get_default_database()
         self.coll = self.db[collection]
         self.fs = gridfs.GridFS(self.db)
+        self.coll.create_index([('location', pymongo.GEO2D)])
 
     def save_to_mongo(self, labels):
         # fs.put saves image using GridFS; it returns an ID that is used to associate the uploaded image to the labels that are being saved
@@ -36,7 +37,7 @@ class DB():
         
     # TODO: create a generic get_data function that will get the data that matches the query(parameters)
     def get_data(self, parameters):
-        return self.coll.count_documents(parameters)
+        return self.coll.find(parameters).limit(3)
 
 # TODO: send emails to the user depending on the error encountered, or when processing is done
 def send_email(message, email):

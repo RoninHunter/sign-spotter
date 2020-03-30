@@ -24,76 +24,23 @@ def split_video(filename, output_dir, fps):
 def gps_list(filename, fps):
     frame_count = frames(filename, fps)
 
+    placeholder = {}
     # TODO: extract gps info from video file and convert to json object
-    placeholder = {
-        1: {
-            'latitude': 10.00,
-            'longitude': 20.00,
-            'bearing': 90,
-            'datetime': 'datetime'
-        },
-        2: {
-            'latitude': 10.00,
-            'longitude': 20.00,
-            'bearing': 90,
-            'datetime': 'datetime'
-        },
-        3: {
-            'latitude': 10.00,
-            'longitude': 20.00,
-            'bearing': 90,
-            'datetime': 'datetime'
-        },
-        4: {
-            'latitude': 10.00,
-            'longitude': 20.00,
-            'bearing': 90,
-            'datetime': 'datetime'
-        },
-        5: {
-            'latitude': 10.00,
-            'longitude': 20.00,
-            'bearing': 90,
-            'datetime': 'datetime'
-        },
-        6: {
-            'latitude': 10.00,
-            'longitude': 20.00,
-            'bearing': 90,
-            'datetime': 'datetime'
-        },
-        7: {
-            'latitude': 10.00,
-            'longitude': 20.00,
-            'bearing': 90,
-            'datetime': 'datetime'
-        },
-        8: {
-            'latitude': 10.00,
-            'longitude': 20.00,
-            'bearing': 90,
-            'datetime': 'datetime'
-        },
-        9: {
-            'latitude': 10.00,
-            'longitude': 20.00,
-            'bearing': 90,
-            'datetime': 'datetime'
-        },
-        10: {
-            'latitude': 10.00,
-            'longitude': 20.00,
-            'bearing': 90,
-            'datetime': 'datetime'
+    for frame in range(1, frame_count+1):
+        placeholder[frame] = {
+            'latitude': 20 + frame/10,
+            'longitude': 81 + frame/10,
+            'bearing': 90 * frame,
+            'datetiem': 'datetime'
         }
-    }
     return placeholder
 
 def frames(filename, fps):
-    print(ffmpeg.probe(filename))
+    # print(ffmpeg.probe(filename))
     return round(float(ffmpeg.probe(filename)['streams'][0]['duration'])*fps)
 
 if __name__ == '__main__':
+    print('')
 
     # a = split_video('/home/egm42/sign-spotter/backend/uploads/1584227441905_REC_2019_11_14_04_10_49_F.mp4', '/home/egm42/sign-spotter/cnn/jpegs')
 
@@ -101,4 +48,4 @@ if __name__ == '__main__':
 
     # print(a)
     
-    print(frames('',10))
+    # print(frames('',10))

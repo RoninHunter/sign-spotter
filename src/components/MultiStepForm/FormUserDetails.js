@@ -49,7 +49,7 @@ export class FormUserDetails extends Component {
                 style = {style}  
                 elevation = {0}
               >
-                <Typography variant = "h5" component = "h3"> 
+                <Typography style={{position: 'absolute', left: '50%', transform: 'translate(-50%, -50%)'}} variant = "h5" component = "h3"> 
                   Video Upload 
                 </Typography>
               </Paper>
