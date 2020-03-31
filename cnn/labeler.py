@@ -6,6 +6,7 @@ import ffmpeg
 import os
 from pathlib import Path
 from bson.son import SON
+from bson.objectid import ObjectId
 
 def main():
   # arguements = sys.argv
@@ -15,7 +16,10 @@ def main():
 
   jpeg_dir = os.path.join(os.path.dirname(__file__),'jpegs')
   fps = 10
-  
+
+  labels = []
+  sign_matrix = {'addedLane': {},'curveLeft': {}, 'curveRight': {}, 'dip': {}, 'doNotEnter': {}, 'keepRight': {}, 'laneEnds': {}, 'merge': {}, 'noLeftTurn': {}, 'noRightTurn': {}, 'pedestrianCrossing': {}, 'rightLaneMustTurn': {}, 'school': {}, 'schoolSpeedLimit25': {}, 'signalAhead': {}, 'slow': {}, 'speedLimit15': {}, 'speedLimit25': {}, 'speedLimit30': {}, 'speedLimit35': {}, 'speedLimit40': {}, 'speedLimit45': {}, 'speedLimit50': {}, 'speedLimit55': {}, 'speedLimit65': {}, 'stop': {}, 'stopAhead': {}, 'yield': {}}
+
   # Temporary
   video_filename = '/home/egm42/sign-spotter/backend/uploads/REC_2019_11_14_04_10_49_F_Trim.mp4'
   email = 'test@email.com'
@@ -23,13 +27,6 @@ def main():
 
   gps_list = scripts.gps_list(video_filename, fps)
 
-  # Creates a class for the DB data will be saved to
-  # db = scripts.DB('labels')
-  labels = []
-  
-  sign_matrix = {'addedLane': {}, 'curveLeft': {}, 'curveRight': {}, 'dip': {}, 'doNotEnter': {}, 'keepRight': {}, 'laneEnds': {}, 'merge': {}, 'noLeftTurn': {}, 'noRightTurn': {}, 'pedestrianCrossing': {}, 'rightLaneMustTurn': {}, 'school': {}, 'schoolSpeedLimit25': {}, 'signalAhead': {}, 'slow': {}, 'speedLimit15': {}, 'speedLimit25': {}, 'speedLimit30': {}, 'speedLimit35': {}, 'speedLimit40': {}, 'speedLimit45': {}, 'speedLimit50': {}, 'speedLimit55': {}, 'speedLimit65': {}, 'stop': {}, 'stopAhead': {}, 'yield': {}}
-
-  
   if(gps_list):
     # The last parameter is fps for processing video in to jpegs
     frame_count = scripts.split_video(video_filename, jpeg_dir, fps)['frame_count']
@@ -45,8 +42,7 @@ def main():
       
       left_labels = process_labels(left_labels, frame_num, video_filename, email, upload_time, left_img, gps_list, 'left')
       right_labels = process_labels(right_labels, frame_num, video_filename, email, upload_time, right_img, gps_list, 'right')
-
-      labels = labels + left_labels + right_labels
+      labels += left_labels + right_labels
 
       for label in left_labels + right_labels:
         if 'class' in label.keys():
@@ -97,50 +93,64 @@ def save_label(last_sighting, labels, side):
     label = [labels[last_sighting * 2 - 2]]
   else:
     label = [labels[last_sighting * 2 - 1]]
+
   sign_class = label[0]['class']
-  latitude = label[0]['latitude']
-  longitude = label[0]['longitude']
+  latitude = label[0]['location'][0]
+  longitude = label[0]['location'][1]
   bearing = label[0]['bearing']
+  last_sighting = label[0]['last_sighting']
 
-  # TODO: need to update bearing filter to account for 360 degrees equaling 0 degrees
-  query = {'class': sign_class, 'location': SON([('$near', [latitude, longitude]), ('$maxDistance', 1)]), 'bearing': {'$gte': bearing - 15, '$lte': bearing + 15}}
+  query = {'class': sign_class, 'location': SON([('$near', [latitude, longitude]), ('$maxDistance', 0.0003)]), 'bearing': {'$gte': (bearing - 15) % 360, '$lte': (bearing + 15) % 360}}
   existing_signs = signs_db.get_data(query)
+  
+  if(existing_signs.count() != 0):
+    existing_id = existing_signs[0]['_id']
+    prev_lat = existing_signs[0]['location'][0]
+    prev_long = existing_signs[0]['location'][1]
+    prev_bear = existing_signs[0]['bearing']
+    prev_sight = existing_signs[0]['sightings']
 
-  if(existing_signs[0]):
-    # TODO create code to update latitude, longitude, bearing, missing and last_seen value
-    print('updating')
+    update = {
+      'location': [(prev_lat * prev_sight + latitude)/(prev_sight + 1), (prev_long * prev_sight + longitude)/(prev_sight + 1)],
+      'bearing': (prev_bear * prev_sight + bearing)/(prev_sight + 1),
+      'sightings': prev_sight + 1,
+      'last_sighting': last_sighting
+    }
+
+    signs_db.update_data(existing_id, update)
     
   else:
-    # TODO create code to save sign as new sign: last_sceen and missing flags
     signs_db.save_to_mongo(label)
-  
 
 def process_labels(labels, frame_num, video_filename, email, upload_time, image_path, gps_list, side):
   if(labels):
     for label in labels:
       label['frame'] = frame_num
       label['original_video_filename'] = video_filename
-      label['latitude'] = gps_list[frame_num]['latitude']
-      label['longitude'] = gps_list[frame_num]['longitude']
       label['location'] = [gps_list[frame_num]['latitude'], gps_list[frame_num]['longitude']]
+      label['last_sighting'] = gps_list[frame_num]['datetime']
       label['bearing'] = gps_list[frame_num]['bearing']
       label['user_email'] = email
       label['upload_time'] = upload_time
       label['side'] = side
       label['image_path'] = image_path
+      label['missing'] = False
+      label['sightings'] = 1
 
       return labels
   else:
     label = {}
     label['frame'] = frame_num
     label['original_video_filename'] = video_filename
-    label['latitude'] = gps_list[frame_num]['latitude']
-    label['longitude'] = gps_list[frame_num]['longitude']
+    label['location'] = [gps_list[frame_num]['latitude'], gps_list[frame_num]['longitude']]
+    label['last_sighting'] = gps_list[frame_num]['datetime']
     label['bearing'] = gps_list[frame_num]['bearing']
     label['user_email'] = email
     label['upload_time'] = upload_time
     label['side'] = side
     label['image_path'] = image_path
+    label['missing'] = False
+    label['sightings'] = 1
 
     return [label]
 

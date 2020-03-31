@@ -37,7 +37,10 @@ class DB():
         
     # TODO: create a generic get_data function that will get the data that matches the query(parameters)
     def get_data(self, parameters):
-        return self.coll.find(parameters).limit(3)
+        return self.coll.find(parameters).limit(1)
+
+    def update_data(self, id, new_data):
+        return self.coll.update_one({'_id': id}, {'$set': new_data})
 
 # TODO: send emails to the user depending on the error encountered, or when processing is done
 def send_email(message, email):

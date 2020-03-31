@@ -31,7 +31,7 @@ def gps_list(filename, fps):
             'latitude': 20 + frame/10,
             'longitude': 81 + frame/10,
             'bearing': 90 * frame,
-            'datetiem': 'datetime'
+            'datetime': 'datetime'
         }
     return placeholder
 
