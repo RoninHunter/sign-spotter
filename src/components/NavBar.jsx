@@ -6,7 +6,7 @@ class NavBar extends Component {
     return (
       <div className = "navbar navbar-expand-lg navbar-light">
         <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
-          <Navbar.Brand href = "home"> SignSPOTTER </Navbar.Brand>
+          <Navbar.Brand href = "home"> signSpotter </Navbar.Brand>
           <Navbar.Toggle aria-controls = "responsive-navbar-nav" />
           <Navbar.Collapse id = "responsive-navbar-nav">
             <Nav className = "mr-auto">
