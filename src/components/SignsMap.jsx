@@ -53,7 +53,7 @@ class Map extends Component {
     return (
       <div style = {styles}>
         <GoogleMapComponent
-          googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyDEq77z0k3qKnzA6KtNSu9mx4QisF-LNgw"
+          googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key="
           loadingElement={<div style={{ height: `100%` }} />}
           containerElement={<div style={{ height: `100%` }} />}
           mapElement={<div style={{ height: `100%` }} />}
