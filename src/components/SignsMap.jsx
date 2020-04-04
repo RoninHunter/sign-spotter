@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import GoogleMapComponent from './GoogleMapComponent'
+import axios from 'axios';
 
 const styles = {
   width: '100%',
@@ -19,42 +20,61 @@ class Map extends React.PureComponent {
     super(props)
 
     this.state = {
+      mapDefaults: {
+        defaultZoom: 13,
+        defaultCenter: {
+          lat: 28.039465,
+          lng: -81.949806
+        }
+      },
       infoboxMessage: 'Message',
       isInfoboxVisible: false,
       markerLng: 0,
       markerLat: 0,
-      signsCurrent: [{
-        lat: 28.030431,
-        lng: -81.957186
-      },
-      {
-        lat: 28.054223,
-        lng: -81.957218
-      }],
-      signsMissing: [{
-        lat: 28.042784,
-        lng: -81.957089
-      }]
+      signsCurrent: [],
+      signsMissing: []
     }
   }
 
-  handleMarkerClick = (message, lat, lng) => {
+  handleMarkerClick = (message, lat, lng, id) => {
     this.setState({
       infoboxMessage: message,
-      isInfoboxVisible: !this.state.isInfoboxVisible,
-      markerLng: lng + 0.006,
-      markerLat: lat - 0.0004
-
+      markerLng: lng,
+      markerLat: lat + 0.004
     })
-    console.log(this.state)
+    this.setState({
+      isInfoboxVisible: !this.state.isInfoboxVisible
+    })
+    // console.log(id)
   }
 
   handleInfoboxClick = () => {
+    console.log(this.state)
     this.setState({
       isInfoboxVisible: false
     })
   }
   
+  componentDidMount() {
+    axios.get('http://localhost:8080/api/locations/current', {
+    }).then((res) => {
+      this.setState({
+        signsCurrent: res.data
+      })
+    })
+
+    axios.get('http://localhost:8080/api/locations/missing', {
+    }).then((res) => {
+      this.setState({
+        signsMissing: res.data
+      })
+    })
+  }
+
+  componentDidUpdate() {
+    // console.log(this.state.signs)
+  }
+
   render() {
     return (
       <div style = {styles}>
@@ -63,14 +83,16 @@ class Map extends React.PureComponent {
           loadingElement={<div style={{ height: `100%` }} />}
           containerElement={<div style={{ height: `100%` }} />}
           mapElement={<div style={{ height: `100%` }} />}
+          mapDefaults={this.state.mapDefaults}
           isInfoboxVisible={this.state.isInfoboxVisible} // Show/hide info window
           infoboxMessage={this.state.infoboxMessage} // Message shown in info window
           handleInfoboxClick={this.handleInfoboxClick} // Handle closing of the info window
           handleMarkerClick={this.handleMarkerClick} // Handle click on Marker component
-          infoboxPosY={this.state.markerLng} // Y coordinate for positioning info window
-          infoboxPosX={this.state.markerLat} // X coordinate for positioning info window
+          infoboxPosX={this.state.markerLng} // Y coordinate for positioning info window
+          infoboxPosY={this.state.markerLat} // X coordinate for positioning info window
           signsCurrent={this.state.signsCurrent}
           signsMissing={this.state.signsMissing}
+          // signs={this.state.signs}
         />
         <a target="_blank" href="https://icons8.com/icons/set/undefined">Marker icons</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
       </div>

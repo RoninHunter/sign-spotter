@@ -98,40 +98,50 @@ app.post('/api/history', function (req, res) {
   }
 });
 
-app.get('/api/locations', function (req, res) {
+app.get('/api/locations/current', function (req, res) {
   console.log('testing');
-  Signs.findOne(function(err, signs) {
+  Signs.find({'missing': false}, function(err, signs) {
+    console.log("Current:")
     console.log(signs);
     res.send(signs);
   });
 });
 
-app.post('/api/locations', function (req, res) {
-  try {
-    // Example response, needs to be replaced with actual connection to DB
-    var test_response = {
-      'locations': [
-        {
-          'latitude': 27.999634,
-          'longitude': -81.957009,
-          'signType': 'signType',
-          'image': 'imageURL'
-        },
-        {
-          'latitude': 27.996470,
-          'longitude': -81.957159,
-          'signType': 'signType',
-          'image': 'imageURL'
-        }
-      ]
-    }
-    res.json(test_response);
-  }
-  catch (e) {
-    console.log(e);
-    res.json({'locations': null});
-  }
+app.get('/api/locations/missing', function (req, res) {
+  console.log('testing');
+  Signs.find({'missing': true}, function(err, signs) {
+    console.log('Missing:')
+    console.log(signs);
+    res.send(signs);
+  });
 });
+
+// app.post('/api/locations', function (req, res) {
+//   try {
+//     // Example response, needs to be replaced with actual connection to DB
+//     var test_response = {
+//       'locations': [
+//         {
+//           'latitude': 27.999634,
+//           'longitude': -81.957009,
+//           'signType': 'signType',
+//           'image': 'imageURL'
+//         },
+//         {
+//           'latitude': 27.996470,
+//           'longitude': -81.957159,
+//           'signType': 'signType',
+//           'image': 'imageURL'
+//         }
+//       ]
+//     }
+//     res.json(test_response);
+//   }
+//   catch (e) {
+//     console.log(e);
+//     res.json({'locations': null});
+//   }
+// });
 
 app.listen(port, () => {
   console.log('Application started on port: ', port);
