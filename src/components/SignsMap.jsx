@@ -14,12 +14,12 @@ const iconCredit = {
   color: 'white'
 }
 
-class Map extends Component {
+class Map extends React.PureComponent {
   constructor(props) {
     super(props)
 
     this.state = {
-      infoboxMessage: '',
+      infoboxMessage: 'Message',
       isInfoboxVisible: false,
       markerLng: 0,
       markerLat: 0,
@@ -30,17 +30,23 @@ class Map extends Component {
       {
         lat: 28.054223,
         lng: -81.957218
+      }],
+      signsMissing: [{
+        lat: 28.042784,
+        lng: -81.957089
       }]
     }
   }
 
-  handleMarkerClick = (message, lng, lat) => {
+  handleMarkerClick = (message, lat, lng) => {
     this.setState({
-      infoMessage: message,
+      infoboxMessage: message,
       isInfoboxVisible: !this.state.isInfoboxVisible,
       markerLng: lng + 0.006,
       markerLat: lat - 0.0004
+
     })
+    console.log(this.state)
   }
 
   handleInfoboxClick = () => {
@@ -53,7 +59,7 @@ class Map extends Component {
     return (
       <div style = {styles}>
         <GoogleMapComponent
-          googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key="
+          googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyByBIpxElZbrcCGHnno141apTYc6tbLcoM"
           loadingElement={<div style={{ height: `100%` }} />}
           containerElement={<div style={{ height: `100%` }} />}
           mapElement={<div style={{ height: `100%` }} />}
@@ -61,11 +67,12 @@ class Map extends Component {
           infoboxMessage={this.state.infoboxMessage} // Message shown in info window
           handleInfoboxClick={this.handleInfoboxClick} // Handle closing of the info window
           handleMarkerClick={this.handleMarkerClick} // Handle click on Marker component
-          infoboxPosY={this.state.markerLang} // Y coordinate for positioning info window
+          infoboxPosY={this.state.markerLng} // Y coordinate for positioning info window
           infoboxPosX={this.state.markerLat} // X coordinate for positioning info window
-          markers={this.state.signsCurrent}
+          signsCurrent={this.state.signsCurrent}
+          signsMissing={this.state.signsMissing}
         />
-        <a style = {iconCredit} href="https://icons8.com/icon/BE8zKVHfRaQj/marker">Marker icon by Icons8</a>
+        <a target="_blank" href="https://icons8.com/icons/set/undefined">Marker icons</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
       </div>
     );
   }

@@ -21,24 +21,40 @@ const GoogleMapComponent = withScriptjs(
       styles: style
     }}
     >
-      {props.markers.map(marker => (
+      {props.signsCurrent.map(marker => (
         <Marker
           icon = {{
-            url: "https://img.icons8.com/offices/30/000000/marker.png"
+            url: "/icons8-marker-20-green.svg"
           }}
           position = {{lat: marker.lat, lng: marker.lng}}
           key = {marker.id}
-          // onClick = {(message, lng, lat) =>
-          //     props.handleMarkerClick(
-          //       'Lat/Long',
-          //       28.030431,
-          //       -81.957186
-          //     )
-          // } 
+          onClick = {(message, lat, lng) =>
+            props.handleMarkerClick(
+              'Lat/Long',
+              28.030431,
+              -81.957186
+            )
+          } 
         />
       ))}
-      
-      {/* {props.isInfoboxVisible && (
+      {/* {props.signsMissing.map(marker => (
+        <Marker
+          icon = {{
+            url: "/icons8-marker-20-red.svg"
+          }}
+          position = {{lat: marker.lat, lng: marker.lng}}
+          key = {marker.id}
+          onClick = {(message, lng, lat) =>
+              props.handleMarkerClick(
+                'Lat/Long',
+                28.030431,
+                -81.957186
+              )
+          } 
+        />
+      ))}
+       */}
+      {props.isInfoboxVisible && (
         <InfoWindow
           position = {{
             lat: props.infoBoxPosY,
@@ -49,7 +65,7 @@ const GoogleMapComponent = withScriptjs(
           <div>
             <h4>{props.infoboxMessage}</h4>
           </div>
-        </InfoWindow> */}
+        </InfoWindow>
       )}
     </GoogleMap>
   ))
