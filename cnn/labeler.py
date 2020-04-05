@@ -21,11 +21,12 @@ def main():
   sign_matrix = {'addedLane': {},'curveLeft': {}, 'curveRight': {}, 'dip': {}, 'doNotEnter': {}, 'keepRight': {}, 'laneEnds': {}, 'merge': {}, 'noLeftTurn': {}, 'noRightTurn': {}, 'pedestrianCrossing': {}, 'rightLaneMustTurn': {}, 'school': {}, 'schoolSpeedLimit25': {}, 'signalAhead': {}, 'slow': {}, 'speedLimit15': {}, 'speedLimit25': {}, 'speedLimit30': {}, 'speedLimit35': {}, 'speedLimit40': {}, 'speedLimit45': {}, 'speedLimit50': {}, 'speedLimit55': {}, 'speedLimit65': {}, 'stop': {}, 'stopAhead': {}, 'yield': {}}
 
   # Temporary
-  video_filename = '/home/egm42/sign-spotter/backend/uploads/REC_2019_11_14_04_10_49_F_Trim.mp4'
+  video_filename = '/home/egm42/sign-spotter/backend/uploads/REC_2020_04_04_08_40_13_F.MP4'
   email = 'test@email.com'
   upload_time = datetime.datetime.now()
 
   gps_list = scripts.gps_list(video_filename, fps)
+  jpeg_list = []
 
   if(gps_list):
     # The last parameter is fps for processing video in to jpegs
@@ -36,6 +37,8 @@ def main():
 
       left_img = os.path.join(jpeg_dir, Path(video_filename).stem + '_' + str(frame_num) + '_image_l.jpg')
       right_img = os.path.join(jpeg_dir, Path(video_filename).stem + '_' + str(frame_num) + '_image_r.jpg')
+      jpeg_list.append(left_img)
+      jpeg_list.append(right_img)
 
       left_labels = scripts.label(left_img)
       right_labels = scripts.label(right_img)
@@ -85,6 +88,8 @@ def main():
   # db.save_to_mongo(labels)
 
   #TODO: Delete images from jpeg_list
+  for image in jpeg_list:
+    print(image)
 
 def save_label(last_sighting, labels, side):
   signs_db = scripts.DB('signs')
