@@ -118,6 +118,9 @@ def main():
 
         signs_db.update_data(existing_id, update)
 
+  # Delete video after processing
+  # os.remove(video_filename)
+
 def save_label(last_sighting, labels, side):
   signs_db = scripts.DB('signs')
 
@@ -160,7 +163,15 @@ def process_labels(labels, frame_num, video_filename, email, upload_time, image_
       label['frame'] = frame_num
       label['original_video_filename'] = video_filename
       label['location'] = [gps_list[frame_num]['latitude'], gps_list[frame_num]['longitude']]
-      label['last_sighting'] = gps_list[frame_num]['datetime']
+      year = gps_list[frame_num]['year']
+      month = gps_list[frame_num]['month']
+      day = gps_list[frame_num]['day']
+      hour = gps_list[frame_num]['hour']
+      minute = gps_list[frame_num]['minute']
+      second = gps_list[frame_num]['second']
+      datetimestamp = datetime.datetime(year, month, day, hour, minute, second)
+      label['last_sighting'] = datetimestamp
+      # label['last_sighting'] = gps_list[frame_num]['datetime']
       label['azimuth'] = gps_list[frame_num]['azimuth']
       label['user_email'] = email
       label['upload_time'] = upload_time
@@ -175,6 +186,14 @@ def process_labels(labels, frame_num, video_filename, email, upload_time, image_
     label['frame'] = frame_num
     label['original_video_filename'] = video_filename
     label['location'] = [gps_list[frame_num]['latitude'], gps_list[frame_num]['longitude']]
+    year = gps_list[frame_num]['year']
+    month = gps_list[frame_num]['month']
+    day = gps_list[frame_num]['day']
+    hour = gps_list[frame_num]['hour']
+    minute = gps_list[frame_num]['minute']
+    second = gps_list[frame_num]['second']
+    datetimestamp = datetime.datetime(year, month, day, hour, minute, second)
+    label['last_sighting'] = datetimestamp
     label['last_sighting'] = gps_list[frame_num]['datetime']
     label['azimuth'] = gps_list[frame_num]['azimuth']
     label['user_email'] = email
