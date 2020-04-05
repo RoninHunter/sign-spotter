@@ -24,14 +24,14 @@ const GoogleMapComponent = withScriptjs(
             url: "/icons8-marker-20-green.svg"
           }}
           position = {{lat: marker.location[0], lng: marker.location[1]}}
-          key = {marker.id}
-          // {...console.log(marker.location[1])}
-          onClick = {(message, lat, lng, id) =>
+          onClick = {(sign_class, lat, lng, missing, image_id) =>
             props.handleMarkerClick(
-              'Lat/Long' + marker.lng,
+              marker.class,
               marker.location[0],
               marker.location[1],
-              marker._id
+              marker.missing,
+              // marker.last_sighting,
+              marker.image_id
             )
           } 
         />
@@ -44,12 +44,14 @@ const GoogleMapComponent = withScriptjs(
           position = {{lat: marker.location[0], lng: marker.location[1]}}
           key = {marker.id}
           // {...console.log(marker.location[1])}
-          onClick = {(message, lat, lng, id) =>
+          onClick = {(sign_class, lat, lng, missing, image_id) =>
             props.handleMarkerClick(
-              'Lat/Long' + marker.lng,
+              marker.class,
               marker.location[0],
               marker.location[1],
-              marker._id
+              marker.missing,
+              // marker.last_sighting,
+              marker.image_id
             )
           } 
         />
@@ -63,7 +65,11 @@ const GoogleMapComponent = withScriptjs(
           onCloseClick={() => props.handleInfoboxClick()}
         >
           <div>
-            <h4>{props.infoboxMessage}</h4>
+            <h4>Sign: {props.infoboxMessage[0]}</h4>
+            <h4>Latitude: {props.infoboxMessage[1]}</h4>
+            <h4>Longitude: {props.infoboxMessage[2]}</h4>
+            <h4>Missing: {props.infoboxMessage[3]}</h4>
+            <h4>Last Sighting: {props.infoboxMessage[4]}</h4>
           </div>
         </InfoWindow>
       )}

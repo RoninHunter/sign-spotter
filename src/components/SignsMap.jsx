@@ -36,16 +36,17 @@ class Map extends React.PureComponent {
     }
   }
 
-  handleMarkerClick = (message, lat, lng, id) => {
+  handleMarkerClick = (sign_class, lat, lng, missing, image_id) => {
+    let last_sighting = 'temp'
+    console.log(missing)
+    let message = [sign_class, lat, lng, String(missing), last_sighting]
     this.setState({
-      infoboxMessage: message,
       markerLng: lng,
-      markerLat: lat + 0.004
-    })
-    this.setState({
+      markerLat: lat + 0.004,
+      infoboxMessage: message,
       isInfoboxVisible: !this.state.isInfoboxVisible
     })
-    // console.log(id)
+    console.log(this.state.signsCurrent)
   }
 
   handleInfoboxClick = () => {
@@ -77,7 +78,7 @@ class Map extends React.PureComponent {
 
   render() {
     return (
-      <div style = {styles}>
+      <div className="map" style = {styles}>
         <GoogleMapComponent
           googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyByBIpxElZbrcCGHnno141apTYc6tbLcoM"
           loadingElement={<div style={{ height: `100%` }} />}
