@@ -36,9 +36,7 @@ class Map extends React.PureComponent {
     }
   }
 
-  handleMarkerClick = (sign_class, lat, lng, missing, image_id) => {
-    let last_sighting = 'temp'
-    console.log(missing)
+  handleMarkerClick = (sign_class, lat, lng, missing, last_sighting, image_id) => {
     let message = [sign_class, lat, lng, String(missing), last_sighting]
     this.setState({
       markerLng: lng,
@@ -46,7 +44,6 @@ class Map extends React.PureComponent {
       infoboxMessage: message,
       isInfoboxVisible: !this.state.isInfoboxVisible
     })
-    console.log(this.state.signsCurrent)
   }
 
   handleInfoboxClick = () => {
@@ -72,10 +69,6 @@ class Map extends React.PureComponent {
     })
   }
 
-  componentDidUpdate() {
-    // console.log(this.state.signs)
-  }
-
   render() {
     return (
       <div className="map" style = {styles}>
@@ -84,18 +77,18 @@ class Map extends React.PureComponent {
           loadingElement={<div style={{ height: `100%` }} />}
           containerElement={<div style={{ height: `100%` }} />}
           mapElement={<div style={{ height: `100%` }} />}
+          
           mapDefaults={this.state.mapDefaults}
-          isInfoboxVisible={this.state.isInfoboxVisible} // Show/hide info window
-          infoboxMessage={this.state.infoboxMessage} // Message shown in info window
-          handleInfoboxClick={this.handleInfoboxClick} // Handle closing of the info window
-          handleMarkerClick={this.handleMarkerClick} // Handle click on Marker component
-          infoboxPosX={this.state.markerLng} // Y coordinate for positioning info window
-          infoboxPosY={this.state.markerLat} // X coordinate for positioning info window
+          isInfoboxVisible={this.state.isInfoboxVisible}
+          infoboxMessage={this.state.infoboxMessage}
+          handleInfoboxClick={this.handleInfoboxClick}
+          handleMarkerClick={this.handleMarkerClick}
+          infoboxPosX={this.state.markerLng}
+          infoboxPosY={this.state.markerLat}
           signsCurrent={this.state.signsCurrent}
           signsMissing={this.state.signsMissing}
-          // signs={this.state.signs}
         />
-        <a target="_blank" href="https://icons8.com/icons/set/undefined">Marker icons</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a>
+        <a target="_blank" href="https://icons8.com/icon/8818/facebook-old">Marker icons by Icons8</a>
       </div>
     );
   }

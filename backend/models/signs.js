@@ -11,8 +11,9 @@ var signsSchema = new Schema({
   longitude: Number,
   bearing: Number,
   side: String,
-  last_sighting: Date,
-  image_path: String
+  last_sighting: String,
+  image_path: String,
+  missing: Boolean
 });
 
 var Signs = mongoose.model('Signs', signsSchema);

@@ -24,13 +24,13 @@ const GoogleMapComponent = withScriptjs(
             url: "/icons8-marker-20-green.svg"
           }}
           position = {{lat: marker.location[0], lng: marker.location[1]}}
-          onClick = {(sign_class, lat, lng, missing, image_id) =>
+          onClick = {(sign_class, lat, lng, missing, last_sighting, image_id) =>
             props.handleMarkerClick(
               marker.class,
               marker.location[0],
               marker.location[1],
               marker.missing,
-              // marker.last_sighting,
+              marker.last_sighting,
               marker.image_id
             )
           } 
@@ -42,15 +42,13 @@ const GoogleMapComponent = withScriptjs(
             url: "/icons8-marker-20-red.svg"
           }}
           position = {{lat: marker.location[0], lng: marker.location[1]}}
-          key = {marker.id}
-          // {...console.log(marker.location[1])}
-          onClick = {(sign_class, lat, lng, missing, image_id) =>
+          onClick = {(sign_class, lat, lng, missing, last_sighting, image_id) =>
             props.handleMarkerClick(
               marker.class,
               marker.location[0],
               marker.location[1],
               marker.missing,
-              // marker.last_sighting,
+              marker.last_sighting,
               marker.image_id
             )
           } 
