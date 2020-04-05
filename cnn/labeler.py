@@ -21,7 +21,7 @@ def main():
   sign_matrix = {'addedLane': {},'curveLeft': {}, 'curveRight': {}, 'dip': {}, 'doNotEnter': {}, 'keepRight': {}, 'laneEnds': {}, 'merge': {}, 'noLeftTurn': {}, 'noRightTurn': {}, 'pedestrianCrossing': {}, 'rightLaneMustTurn': {}, 'school': {}, 'schoolSpeedLimit25': {}, 'signalAhead': {}, 'slow': {}, 'speedLimit15': {}, 'speedLimit25': {}, 'speedLimit30': {}, 'speedLimit35': {}, 'speedLimit40': {}, 'speedLimit45': {}, 'speedLimit50': {}, 'speedLimit55': {}, 'speedLimit65': {}, 'stop': {}, 'stopAhead': {}, 'yield': {}}
 
   # Temporary
-  video_filename = '/home/egm42/sign-spotter/backend/uploads/REC_2020_04_04_08_40_13_F.MP4'
+  video_filename = '/home/egm42/sign-spotter/backend/uploads/REC_2020_04_04_08_40_13_F_Trim.mp4'
   email = 'test@email.com'
   upload_time = datetime.datetime.now()
 
@@ -68,16 +68,19 @@ def main():
             last_sighting = frame_num
           else:
             blanks += 1
+            # TODO: tweak amount of blank frames and sightings needed to trigger saving of sign
             if(blanks >= 2 and sightings >= 1):
               save_label(last_sighting, labels, side)
               sightings = 0
               last_sighting = 0
         else:
           blanks += 1
+          # TODO: tweak amount of blank frames and sightings needed to trigger saving of sign
           if(blanks >= 2 and sightings >= 1):
             save_label(last_sighting, labels, side)
             sightings = 0
             last_sighting = 0
+      # TODO: tweak amount of blank frames and sightings needed to trigger saving of sign
       if(sightings >= 1 and last_sighting != 0):
         save_label(last_sighting, labels, side)
 
@@ -87,9 +90,33 @@ def main():
   # print(sign_matrix)
   # db.save_to_mongo(labels)
 
-  #TODO: Delete images from jpeg_list
+  # Delete images from jpegs folder after processing and uploading to DB
   for image in jpeg_list:
-    print(image)
+    os.remove(image)
+
+  # iterate through all gps points and check if signs have been updated
+  signs_db = scripts.DB('signs')
+  new_sightings = gps_list[1]['datetime']
+
+  for frame in range(1, frame_count + 1):
+    latitude = gps_list[frame]['latitude']
+    longitude = gps_list[frame]['longitude']
+    azimuth = gps_list[frame]['azimuth']
+
+    # Query looks for closest sign within the maxDistance that has a similar azimuth
+    query = {'location': SON([('$near', [latitude, longitude]), ('$maxDistance', 0.0003)]), 'azimuth': {'$gte': (azimuth - 10) % 360, '$lte': (azimuth + 10) % 360}}
+    existing_signs = signs_db.get_data(query)
+  
+    if(existing_signs.count() != 0):
+      existing_id = existing_signs[0]['_id']
+
+      # TODO: build logic checking datetime
+      if(existing_signs[0]['last_sighting'] < new_sightings):
+        update = {
+          'missing': True
+        }
+
+        signs_db.update_data(existing_id, update)
 
 def save_label(last_sighting, labels, side):
   signs_db = scripts.DB('signs')
@@ -102,22 +129,22 @@ def save_label(last_sighting, labels, side):
   sign_class = label[0]['class']
   latitude = label[0]['location'][0]
   longitude = label[0]['location'][1]
-  bearing = label[0]['bearing']
+  azimuth = label[0]['azimuth']
   last_sighting = label[0]['last_sighting']
 
-  query = {'class': sign_class, 'location': SON([('$near', [latitude, longitude]), ('$maxDistance', 0.0003)]), 'bearing': {'$gte': (bearing - 15) % 360, '$lte': (bearing + 15) % 360}}
+  query = {'class': sign_class, 'location': SON([('$near', [latitude, longitude]), ('$maxDistance', 0.0003)]), 'azimuth': {'$gte': (azimuth - 15) % 360, '$lte': (azimuth + 15) % 360}}
   existing_signs = signs_db.get_data(query)
   
   if(existing_signs.count() != 0):
     existing_id = existing_signs[0]['_id']
     prev_lat = existing_signs[0]['location'][0]
     prev_long = existing_signs[0]['location'][1]
-    prev_bear = existing_signs[0]['bearing']
+    prev_bear = existing_signs[0]['azimuth']
     prev_sight = existing_signs[0]['sightings']
 
     update = {
       'location': [(prev_lat * prev_sight + latitude)/(prev_sight + 1), (prev_long * prev_sight + longitude)/(prev_sight + 1)],
-      'bearing': (prev_bear * prev_sight + bearing)/(prev_sight + 1),
+      'azimuth': (prev_bear * prev_sight + azimuth)/(prev_sight + 1),
       'sightings': prev_sight + 1,
       'last_sighting': last_sighting
     }
@@ -134,7 +161,7 @@ def process_labels(labels, frame_num, video_filename, email, upload_time, image_
       label['original_video_filename'] = video_filename
       label['location'] = [gps_list[frame_num]['latitude'], gps_list[frame_num]['longitude']]
       label['last_sighting'] = gps_list[frame_num]['datetime']
-      label['bearing'] = gps_list[frame_num]['bearing']
+      label['azimuth'] = gps_list[frame_num]['azimuth']
       label['user_email'] = email
       label['upload_time'] = upload_time
       label['side'] = side
@@ -149,7 +176,7 @@ def process_labels(labels, frame_num, video_filename, email, upload_time, image_
     label['original_video_filename'] = video_filename
     label['location'] = [gps_list[frame_num]['latitude'], gps_list[frame_num]['longitude']]
     label['last_sighting'] = gps_list[frame_num]['datetime']
-    label['bearing'] = gps_list[frame_num]['bearing']
+    label['azimuth'] = gps_list[frame_num]['azimuth']
     label['user_email'] = email
     label['upload_time'] = upload_time
     label['side'] = side
