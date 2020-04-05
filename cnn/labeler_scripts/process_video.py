@@ -26,8 +26,8 @@ def split_video(filename, output_dir, fps):
     image_left  = ffmpeg.output(image_left,  os.path.join(output_dir, file + '_%d_image_l.jpg'))
     image_right = ffmpeg.output(image_right, os.path.join(output_dir, file + '_%d_image_r.jpg'))
 
-    result_left  = ffmpeg.run(image_left)
-    result_right = ffmpeg.run(image_right)
+    # result_left  = ffmpeg.run(image_left)
+    # result_right = ffmpeg.run(image_right)
 
     return {'frame_count': frame_count}
 
@@ -51,77 +51,19 @@ def longConverter(lat):
     return (float(value)/60) + float(headDigits)
 
 
+def interpolateGPSpoints(frameNum, lat_long, framesTotal):
+    ret = []
+    x = np.array(frameNum)
+    y = np.array(lat_long)
 
+    # Spline/Cubic interpolation
+    f2_cubic = interpolate.interp1d(x,y, kind = 'cubic')
 
-def interpolateGPSpointsNEW(timestamp,  LAT, LONG):
+    for linX in range(1,framesTotal + 1):
+        y_i = f2_cubic(linX)
+        ret.append(y_i)  # interpolated value at this index
 
-    latData = np.array((timestamp,LAT))
-    plt.plot(timestamp, LAT, 'o')
-    plt.show()
-    
-    latData = np.array((timestamp, LAT))
-    tck_0,u_0 = interpolate.splprep(latData, s = 0)
-    unew_0 = np.arange(0, 1.01, 0.01)
-    out_0 = interpolate.splev(unew_0, tck_0)
-
-
-    longData = np.array((timestamp,LONG))
-    plt.plot(timestamp, LONG, 'o')
-    plt.show()
-    
-    longData = np.array((timestamp, LONG))
-    tck_1,u = interpolate.splprep(longData, s = 0)
-    unew_1 = np.arange(0, 1.01, 0.01)
-    out_1 = interpolate.splev(unew_1, tck_1)
-
-
-    # longData = np.array((timestamp, LONG))
-    # tck_1,u = interpolate.splprep(longData, s = 0)
-    # unew_1 = np.arange(0, 1.01, 0.01)
-    # out_1 = interpolate.splev(unew_1, tck_1)
-
-
-    plt.plot(out[0], out[1], color ='orange')
-    plt.plot(data[0,:], data[1,:], 'ob')
-    plt.show()
-    # return out
-
-
-
-
-
-def interpolateGPSpoints__OLD(timestamp, distance):
-
-    data = np.array((timestamp,distance))
-    plt.plot(timestamp, distance, 'o')
-    plt.show()
-    
-    tck,u = interpolate.splprep(data, s = 0)
-
-    unew = np.arange(0, 1.01, 0.01)
-    out = interpolate.splev(unew, tck)
-
-    plt.plot(out[0], out[1], color ='orange')
-
-    plt.plot(data[0,:], data[1,:], 'ob')
-    plt.show()
-    # return out
-
-def interpolateGPSpoints(x, y):
-    data = np.array((x,y))
-    plt.plot(x, y, 'o')
-    plt.show()
-    
-    tck,u = interpolate.splprep(data, s = 0)
-
-    unew = np.arange(0, 1.01, 0.01)
-    out = interpolate.splev(unew, tck)
-
-    plt.plot(out[0], out[1], color ='orange')
-
-    plt.plot(data[0,:], data[1,:], 'ob')
-    plt.show()
-    # return out
+    return ret
 
 
 # GPS class for bundling gps frame data
@@ -136,7 +78,7 @@ class json_GPSobj:
                 'seconds': '',
                 'latitude': '',
                 'longitude': '',
-                #'velocity': '',
+                'velocity': '',
                 'azimuth': '',
                 'day': '',
                 'month': '',
@@ -149,7 +91,7 @@ class json_GPSobj:
         self.frameDict['longitude'] = longitude
 
         # Speed over ground, Knots
-        # self.frameDict['velocity']  = velocity
+        self.frameDict['velocity']  = velocity
 
         # True Course a.k.a Azimuth
         self.frameDict['azimuth']  = azimuth
@@ -187,17 +129,17 @@ def gps_list(filename, fps):
     framesNum = 0
 
     frameStamp = []
-    # timestamp = ()
-    timestamp = []
-    # distance  = ()
+    timeForInterp = []
     longForInterp = []
     latForInterp = []
+    speedForInterp = []
+    azimuthForInterp = []
 
     frameInturpDict = {
             'seconds': '',
             'latitude': '',
             'longitude': '',
-            #'velocity': '',
+            'velocity': '',
             'azimuth': '',
             'day': '',
             'month': '',
@@ -209,31 +151,16 @@ def gps_list(filename, fps):
     with open('/home/lil-as/sign-spotter/backend/uploads/sub.txt', 'r') as f:
     
         for line in f:
-            # print(line, end='')
+
 
             # Counting the number of gps frames
             framesNum = lineFrameCount(line, "gsensori")
+
             framePerLine.append(framesNum)
 
-            # current_Frame = current_Frame + framesNum
-            current_Frame = current_Frame + framesNum 
-
-            # for cur_Frame in framesNum:
-
-            if(framesNum < 8):
-                for cur_Frame in range(framesNum):
-                    videoFrameDictionary[cur_Frame] = frameInturpDict
-
-            # for cur_Frame in range(framesNum):
-            #     videoFrameDictionary[cur_Frame] = frameInturpDict
-
-            
-            for cur_Frame in range(framesNum):
-                videoFrameDictionary[current_Frame + cur_Frame] = frameInturpDict
-
-            
-            # print(framePerLine)
-
+            for cur_Frame in range(1, framesNum + 1):
+                videoFrameDictionary[current_Frame + cur_Frame] = frameInturpDict    
+            current_Frame = current_Frame + framesNum
 
 
             #      0           1      2         3         4      5             6     7             8          9
@@ -251,9 +178,6 @@ def gps_list(filename, fps):
                 # GPSplace.append(line.find("GPRMC"))
 
                 lineList = gpsInfoSlice.split(",")
-                print(' ')
-                # print(lineList)
-
 
                 latTemp = str(latConverter(lineList[3]))
                 lineList[3] = latTemp[0:9] #+ ' ' + lineList[4]
@@ -275,15 +199,20 @@ def gps_list(filename, fps):
                 month = dateStr[2:4]
                 year  = dateStr[4:]
 
-                print(current_Frame)
-                print(lineList[3][0:9])
-                print(float(lineList[3][0:9]))
+                ## print(current_Frame)
+                ## print(lineList[3][0:9])
+                ## print(float(lineList[3][0:9]))
+
+
 
                 # These three are for interp function
-                frameStamp.append(float(current_Frame))
-                timestamp.append(float(lineList[1]))
+                frameStamp.append(int(current_Frame))
+                # timeForInterp.append(float(lineList[1]))
                 latForInterp.append(float(lineList[3][0:9]))
                 longForInterp.append(float(lineList[5][0:9]))
+                speedForInterp.append(float(lineList[7]))
+                azimuthForInterp.append(float(lineList[8]))
+
 
                 #                                  1           3            5            7             8                      
                 #                            frameIndex,     seconds,    latitude,   longitude,    velocity,      azimuth, day, month, year)
@@ -296,28 +225,56 @@ def gps_list(filename, fps):
                 # print(videoFrameDictionary)
 
 
-    # for sec in timestamp:
-        # print(sec)
-    # for lats in latForInterp:
-    #     print(lats)
-    # for longs in longForInterp:
-        # print(longs)
 
+    frameStamp.insert(0,0)
+    frameStamp.append(current_Frame)
     frameStampTup = tuple(frameStamp)
-    timestampTup = tuple(timestamp)
-    longTup = tuple(longForInterp)
+
+    # timeCopyFirstElement =  timeForInterp[0]
+    # timeCopyLastElement =  timeForInterp[-1]
+    # timeForInterp.insert(0, timeCopyFirstElement)
+    # timeForInterp.append( timeCopyLastElement)
+    # timeTup = tuple( timeForInterp)
+    # interpTime = interpolateGPSpoints(frameStampTup, timeTup, current_Frame)
+
+    latCopyFirstElement = latForInterp[0]
+    latCopyLastElement = latForInterp[-1]
+    latForInterp.insert(0,latCopyFirstElement)
+    latForInterp.append(latCopyLastElement)
     latTup = tuple(latForInterp)
+    interpLat = interpolateGPSpoints(frameStampTup, latTup, current_Frame)
+
+    longCopyFirstElement = longForInterp[0]
+    longCopyLastElement = longForInterp[-1]
+    longForInterp.insert(0,longCopyFirstElement)
+    longForInterp.append(longCopyLastElement)
+    longTup = tuple(longForInterp)
+    interpLong = interpolateGPSpoints(frameStampTup, longTup, current_Frame)
+
+    speedCopyFirstElement = speedForInterp[0]
+    speedCopyLastElement = speedForInterp[-1]
+    speedForInterp.insert(0,speedCopyFirstElement)
+    speedForInterp.append(speedCopyLastElement)
+    speedTup = tuple(speedForInterp)
+    interpSpeed = interpolateGPSpoints(frameStampTup, speedTup, current_Frame)
+
+    azimuthCopyFirstElement = azimuthForInterp[0]
+    azimuthCopyLastElement = azimuthForInterp[-1]
+    azimuthForInterp.insert(0,azimuthCopyFirstElement)
+    azimuthForInterp.append(azimuthCopyLastElement)
+    azimuthTup = tuple(azimuthForInterp)
+    interpAzimuth = interpolateGPSpoints(frameStampTup, azimuthTup, current_Frame)
+
+
     
+    # print(len(videoFrameDictionary))
+    for frame in range(1, len(videoFrameDictionary) + 1):
+        
+        videoFrameDictionary[frame]['latitude'] = str(interpLat[frame - 1])
+        videoFrameDictionary[frame]['longitude'] = str(interpLong[frame -1])
+        print(frame, videoFrameDictionary[frame]['latitude'], videoFrameDictionary[frame]['longitude'])
 
-    timestampExamp = (5,10,15,30,35,40,50,55,60)
-    distanceExamp = (90,65,85,70,30,40,45,20,0)
-    interpolateGPSpoints(timestampExamp, distanceExamp)
-
-    # interpolateGPSpoints(timestampExamp, latTup)
-
-
-
-    # ###print(videoFrameDictionary)
+    # print(videoFrameDictionary)
 
     return videoFrameDictionary
 
