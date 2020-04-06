@@ -133,6 +133,11 @@ videoFrameDictionary = {}
 
 def gps_list(filename, fps):
 
+    os.system('ffmpeg -i ' + filename + ' -an -vn -bsf:s mov2textsub -scodec copy -f rawvideo ' + filename + '_sub.txt')
+
+    # os.system('ffmpeg -i /home/User/sign-spotter/backend/uploads/REC_2019_11_14_04_10_49_F.MP4 -an -vn -bsf:s mov2textsub -scodec copy -f rawvideo sub.txt')
+
+
     line = []
     framePerLine = []
     current_Frame = 0
@@ -172,7 +177,7 @@ def gps_list(filename, fps):
 
     
 
-    with open('/home/lil-as/sign-spotter/backend/uploads/sub.txt', 'r') as f:
+    with open(filename + '_sub.txt', 'r') as f:
     
         for line in f:
 
