@@ -14,7 +14,7 @@ toaddr = "luisgruiz@ufl.edu"
 def emailSender(filename):
    
     # instance of MIMEMultipart 
-    msg = MIMEMultipart() 
+    msg = MIMEMultipart()
     
     # storing the senders email address   
     msg['From'] = 'signspotter@yahoo.com'
@@ -61,7 +61,7 @@ def emailSender(filename):
     stmp.starttls() 
     
     # Authentication 
-    stmp.login(fromaddr, "Chirality1!") 
+    stmp.login(fromaddr, "password) 
     
     # Converts the Multipart msg into a string 
     text = msg.as_string() 
