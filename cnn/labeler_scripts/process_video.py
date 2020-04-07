@@ -105,15 +105,12 @@ class json_GPSobj:
         self.frameDict['year']      = year
 
          # Time block
-        self.frameDict['hour']    = day
-        self.frameDict['minute']  = month
-        self.frameDict['second']  = year
-
-
+        self.frameDict['hour']    = hour
+        self.frameDict['minute']  = minute
+        self.frameDict['second']  = second
 
     def currentFrameData(self):
-        return self.frameDict
-    
+        return self.frameDict    
 
     def printFrameElement(self, currentFrameIndex, frameElement):
         return self.frameDict[frameElement]
@@ -127,16 +124,11 @@ class json_GPSobj:
     def printFrame(self):
         print(self.frameDict)
     
-
 videoFrameDictionary = {}
-
 
 def gps_list(filename, fps):
 
-    os.system('ffmpeg -i ' + filename + ' -an -vn -bsf:s mov2textsub -scodec copy -f rawvideo ' + filename + '_sub.txt')
-
-    # os.system('ffmpeg -i /home/User/sign-spotter/backend/uploads/REC_2019_11_14_04_10_49_F.MP4 -an -vn -bsf:s mov2textsub -scodec copy -f rawvideo sub.txt')
-
+    os.system('ffmpeg -i ' + filename + ' -an -vn -bsf:s mov2textsub -scodec copy -f rawvideo ' + filename + '_sub.txt -y')
 
     line = []
     framePerLine = []
@@ -161,22 +153,6 @@ def gps_list(filename, fps):
     speedForInterp = []
     azimuthForInterp = []
 
-    frameInturpDict = {
-            'oldeTime': '',
-            'latitude': '',
-            'longitude': '',
-            'velocity': '',
-            'azimuth': '',
-            'day': '',
-            'month': '',
-            'year': '',
-            'hour': '',
-            'minute': '',
-            'second': '',
-        }
-
-    
-
     with open(filename + '_sub.txt', 'r') as f:
     
         for line in f:
@@ -187,6 +163,21 @@ def gps_list(filename, fps):
             framePerLine.append(framesNum)
 
             for cur_Frame in range(1, framesNum + 1):
+
+
+                frameInturpDict = {
+                    'oldeTime': '',
+                    'latitude': '',
+                    'longitude': '',
+                    'velocity': '',
+                    'azimuth': '',
+                    'day': '',
+                    'month': '',
+                    'year': '',
+                    'hour': '',
+                    'minute': '',
+                    'second': '',
+                }
                             
                 if(curSecond >= 0):
                     if(-1 != curSecond  and  curSecond < 60):
@@ -216,9 +207,9 @@ def gps_list(filename, fps):
 
                 videoFrameDictionary[current_Frame + cur_Frame] = frameInturpDict
 
-                print((current_Frame + cur_Frame),videoFrameDictionary[current_Frame + cur_Frame]['hour'], 
-                    videoFrameDictionary[current_Frame + cur_Frame]['minute'], 
-                    videoFrameDictionary[current_Frame + cur_Frame]['second'])
+                # print((current_Frame + cur_Frame),videoFrameDictionary[current_Frame + cur_Frame]['hour'], 
+                #     videoFrameDictionary[current_Frame + cur_Frame]['minute'], 
+                #     videoFrameDictionary[current_Frame + cur_Frame]['second'])
 
             current_Frame = current_Frame + framesNum
 
@@ -245,8 +236,6 @@ def gps_list(filename, fps):
                         firstMinute = 0
                         firstHour   = 0
 
-                    
-
                     videoFrameDictionary[curEmptyFrame]['hour']   = firstHour
                     videoFrameDictionary[curEmptyFrame]['minute'] = firstMinute
                     videoFrameDictionary[curEmptyFrame]['second'] = firstSecond
@@ -258,6 +247,8 @@ def gps_list(filename, fps):
                 fullFrameTrigger = 1
 
 
+
+
             #      0           1      2         3         4      5             6     7             8          9             10     11    12
             # ['GPRMC', '125647.00', 'A', '2757.17350',  'N', '08156.42096',  'W', '40.754',     '89.68', '14 11 19'        12     56    47 
             # ['GPRMC',   hhmmss.ss,   A,    [lati.tu],  N-S,     [long.it],  E-W,    knots,  TrueCourse,  day,month,year, hour,minute,second]
@@ -267,11 +258,6 @@ def gps_list(filename, fps):
             gpsInfoSlice = line[line.find("GPRMC"):len(line)-8] 
 
             if(gpsInfoSlice):
-                # Take a look at the original gps frame slices
-                # print(gpsInfoSlice)
-
-                # GPSplace.append(line.find("GPRMC"))
-
 
                 lineList = gpsInfoSlice.split(",")
 
@@ -296,9 +282,6 @@ def gps_list(filename, fps):
                 month = dateStr[2:4]
                 year  = dateStr[4:]
 
-
-
-                # print(lineList[1])
                 ### TIME
                 timeStr = ''
                 for timeData in lineList[1:2]:
@@ -313,15 +296,6 @@ def gps_list(filename, fps):
                 curSecond = float(second)
                 emptyFrameTrigger = 1
 
-                # print(curHour, curMinute, curSecond)
-
-
-
-                ## print(current_Frame)
-                ## print(lineList[3][0:9])
-                ## print(float(lineList[3][0:9]))
-
-
 
                 # These three are for interp function
                 frameStamp.append(int(current_Frame))
@@ -335,14 +309,9 @@ def gps_list(filename, fps):
                 #                                  1           3            5            7             8                      
                 #                            frameIndex,     time,    latitude,   longitude,    velocity,      azimuth, day, month, year)
                 jsonGPSlist = json_GPSobj(current_Frame, lineList[1], lineList[3], lineList[5], lineList[7],  lineList[8], day, month, year , str(curHour), str(curMinute), str(curSecond))
-                
+                6
                 videoFrameDictionary[current_Frame] = jsonGPSlist.currentFrameData()
                  
-
-    print(videoFrameDictionary)
-
-
-
     frameStamp.insert(0,0)
     frameStamp.append(current_Frame)
     frameStampTup = tuple(frameStamp)
@@ -375,31 +344,23 @@ def gps_list(filename, fps):
     azimuthTup = tuple(azimuthForInterp)
     interpAzimuth = interpolateGPSpoints(frameStampTup, azimuthTup, current_Frame)
 
-    # for frame in range(1, len(videoFrameDictionary) + 1):       
-        # print(videoFrameDictionary[frame]['hour'], videoFrameDictionary[frame]['second'], videoFrameDictionary[frame]['second'])
+    for frame in range(1, len(videoFrameDictionary) + 1):
+        videoFrameDictionary[frame]['latitude']  = str(interpLat[frame - 1])
+        videoFrameDictionary[frame]['longitude'] = str(interpLong[frame -1])
+        videoFrameDictionary[frame]['velocity']  = str(interpSpeed[frame - 1])
+        videoFrameDictionary[frame]['azimuth']   = str(interpAzimuth[frame -1])
 
-    
-    # for frame in range(1, len(videoFrameDictionary) + 1):
-        
-    #     videoFrameDictionary[frame]['latitude']  = str(interpLat[frame - 1])
-    #     videoFrameDictionary[frame]['longitude'] = str(interpLong[frame -1])
-    #     videoFrameDictionary[frame]['velocity']  = str(interpSpeed[frame - 1])
-    #     videoFrameDictionary[frame]['azimuth']   = str(interpAzimuth[frame -1])
-
-
-
-
-    #     print(frame, videoFrameDictionary[frame]['latitude'], 
-    #                  videoFrameDictionary[frame]['longitude'], 
-    #                  videoFrameDictionary[frame]['velocity'], 
-    #                  videoFrameDictionary[frame]['azimuth'],
-
-    #                  videoFrameDictionary[frame]['hour'],
-    #                  videoFrameDictionary[frame]['minute'],
-    #                  videoFrameDictionary[frame]['second'],
-    #                  )
-
-
+        # print(frame, videoFrameDictionary[frame]['latitude'], "  ",
+        #              videoFrameDictionary[frame]['longitude'], "  ",
+        #              videoFrameDictionary[frame]['velocity'], "  ", 
+        #              videoFrameDictionary[frame]['azimuth'], "  ",
+        #              videoFrameDictionary[frame]['day'], "  ",
+        #              videoFrameDictionary[frame]['month'], "  ",
+        #              videoFrameDictionary[frame]['year'], "  ",
+        #              videoFrameDictionary[frame]['hour'], "  ",
+        #              videoFrameDictionary[frame]['minute'], "  ",
+        #              videoFrameDictionary[frame]['second'], "  ",
+        #              )
 
     return videoFrameDictionary
 
@@ -411,11 +372,5 @@ def frames(filename, fps):
     return round(float(ffmpeg.probe(filename)['streams'][0]['duration'])*fps)
 
 if __name__ == '__main__':
-
-    # a = split_video('/home/egm42/sign-spotter/backend/uploads/1584227441905_REC_2019_11_14_04_10_49_F.mp4', '/home/egm42/sign-spotter/cnn/jpegs')
-
-    # a = split_video('/home/egm42/sign-spotter/backend/uploads/REC_2019_04_12_10_04_29_F_Trim1_Trim.mp4', '/home/egm42/sign-spotter/cnn/jpegs', 10)
-
-    # print(a)
 
    gps_list("/home/lil-as/sign-spotter/backend/uploads/REC_2019_11_14_04_10_49_F.MP4", 10)
