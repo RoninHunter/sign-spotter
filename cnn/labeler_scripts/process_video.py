@@ -313,6 +313,9 @@ def gps_list(filename, fps):
                 jsonGPSlist = json_GPSobj(current_Frame, lineList[1], lineList[3], lineList[5], lineList[7],  lineList[8], day, month, year , str(curHour), str(curMinute), str(curSecond))
 
                 videoFrameDictionary[current_Frame] = jsonGPSlist.currentFrameData()
+
+                if(not date):
+                    date = [year, month, day]
                  
     frameStamp.insert(0,0)
     frameStamp.append(current_Frame)
