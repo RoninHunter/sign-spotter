@@ -38,5 +38,17 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "description": "## Getting Started Sign Spotter is designed as an asset managment application that allows users to identify missing traffic signs. It is able to accomplish this through the use of a convolutional neural network that identifies the signs from user uploaded videos.",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RoninHunter/sign-spotter.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RoninHunter/sign-spotter/issues"
+  },
+  "homepage": "https://github.com/RoninHunter/sign-spotter#readme"
 }
