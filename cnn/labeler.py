@@ -21,7 +21,7 @@ def main():
   sign_matrix = {'addedLane': {},'curveLeft': {}, 'curveRight': {}, 'dip': {}, 'doNotEnter': {}, 'keepRight': {}, 'laneEnds': {}, 'merge': {}, 'noLeftTurn': {}, 'noRightTurn': {}, 'pedestrianCrossing': {}, 'rightLaneMustTurn': {}, 'school': {}, 'schoolSpeedLimit25': {}, 'signalAhead': {}, 'slow': {}, 'speedLimit15': {}, 'speedLimit25': {}, 'speedLimit30': {}, 'speedLimit35': {}, 'speedLimit40': {}, 'speedLimit45': {}, 'speedLimit50': {}, 'speedLimit55': {}, 'speedLimit65': {}, 'stop': {}, 'stopAhead': {}, 'yield': {}}
 
   # Temporary
-  video_filename = '/home/egm42/sign-spotter/backend/uploads/REC_2020_04_04_08_40_13_F_Trim.mp4'
+  video_filename = '/home/egm42/sign-spotter/backend/uploads/REC_2020_04_04_08_40_13_F.MP4'
   email = 'test@email.com'
   upload_time = datetime.datetime.now()
 
@@ -30,7 +30,8 @@ def main():
 
   if(gps_list):
     # The last parameter is fps for processing video in to jpegs
-    frame_count = scripts.split_video(video_filename, jpeg_dir, fps)['frame_count']
+    frame_count = scripts.split_video(video_filename, jpeg_dir, fps)
+    frame_count = len(gps_list)
     
     # Frames start at 1, hence the range(1, frame_count + 1)
     for frame_num in range(1, frame_count + 1):
@@ -42,7 +43,7 @@ def main():
 
       left_labels = scripts.label(left_img)
       right_labels = scripts.label(right_img)
-      
+
       left_labels = process_labels(left_labels, frame_num, video_filename, email, upload_time, left_img, gps_list, 'left')
       right_labels = process_labels(right_labels, frame_num, video_filename, email, upload_time, right_img, gps_list, 'right')
       labels += left_labels + right_labels
@@ -69,19 +70,19 @@ def main():
           else:
             blanks += 1
             # TODO: tweak amount of blank frames and sightings needed to trigger saving of sign
-            if(blanks >= 2 and sightings >= 1):
+            if(blanks >= 2 and sightings >= 3):
               save_label(last_sighting, labels, side)
               sightings = 0
               last_sighting = 0
         else:
           blanks += 1
           # TODO: tweak amount of blank frames and sightings needed to trigger saving of sign
-          if(blanks >= 2 and sightings >= 1):
+          if(blanks >= 2 and sightings >= 3):
             save_label(last_sighting, labels, side)
             sightings = 0
             last_sighting = 0
       # TODO: tweak amount of blank frames and sightings needed to trigger saving of sign
-      if(sightings >= 1 and last_sighting != 0):
+      if(sightings >= 3 and last_sighting != 0):
         save_label(last_sighting, labels, side)
 
   # for label in labels:
@@ -95,16 +96,28 @@ def main():
     os.remove(image)
 
   # iterate through all gps points and check if signs have been updated
+  print('Processing GPS list')
+
   signs_db = scripts.DB('signs')
-  new_sightings = gps_list[1]['datetime']
+  year = int(gps_list[1]['year'])
+  month = int(gps_list[1]['month'])
+  day = int(gps_list[1]['day'])
+  hour = int(gps_list[1]['hour'])
+  minute = int(gps_list[1]['minute'])
+  second = int(float(gps_list[1]['second']))
+  microsecond = int(round((second % 1) * 1000000,0))
+  if(microsecond == 1):
+    second += 1
+    microsecond = 0
+  new_sightings = datetime.datetime(year, month, day, hour, minute, second, microsecond) - datetime.timedelta(minutes=1)
 
   for frame in range(1, frame_count + 1):
-    latitude = gps_list[frame]['latitude']
-    longitude = gps_list[frame]['longitude']
-    azimuth = gps_list[frame]['azimuth']
+    latitude = float(gps_list[frame]['latitude'])
+    longitude = float(gps_list[frame]['longitude'])
+    azimuth = int(float(gps_list[frame]['azimuth']))
 
     # Query looks for closest sign within the maxDistance that has a similar azimuth
-    query = {'location': SON([('$near', [latitude, longitude]), ('$maxDistance', 0.0003)]), 'azimuth': {'$gte': (azimuth - 10) % 360, '$lte': (azimuth + 10) % 360}}
+    query = {'location': SON([('$near', [latitude, longitude]), ('$maxDistance', 0.0003)]), 'azimuth': {'$gte': (azimuth - 15) % 360, '$lte': (azimuth + 15) % 360}}
     existing_signs = signs_db.get_data(query)
   
     if(existing_signs.count() != 0):
@@ -130,14 +143,14 @@ def save_label(last_sighting, labels, side):
     label = [labels[last_sighting * 2 - 1]]
 
   sign_class = label[0]['class']
-  latitude = label[0]['location'][0]
-  longitude = label[0]['location'][1]
-  azimuth = label[0]['azimuth']
+  latitude = float(label[0]['location'][0])
+  longitude = float(label[0]['location'][1])
+  azimuth = int(float(label[0]['azimuth']))
   last_sighting = label[0]['last_sighting']
 
   query = {'class': sign_class, 'location': SON([('$near', [latitude, longitude]), ('$maxDistance', 0.0003)]), 'azimuth': {'$gte': (azimuth - 15) % 360, '$lte': (azimuth + 15) % 360}}
   existing_signs = signs_db.get_data(query)
-  
+
   if(existing_signs.count() != 0):
     existing_id = existing_signs[0]['_id']
     prev_lat = existing_signs[0]['location'][0]
@@ -162,17 +175,20 @@ def process_labels(labels, frame_num, video_filename, email, upload_time, image_
     for label in labels:
       label['frame'] = frame_num
       label['original_video_filename'] = video_filename
-      label['location'] = [gps_list[frame_num]['latitude'], gps_list[frame_num]['longitude']]
-      year = gps_list[frame_num]['year']
-      month = gps_list[frame_num]['month']
-      day = gps_list[frame_num]['day']
-      hour = gps_list[frame_num]['hour']
-      minute = gps_list[frame_num]['minute']
-      second = gps_list[frame_num]['second']
-      datetimestamp = datetime.datetime(year, month, day, hour, minute, second)
+      label['location'] = [float(gps_list[frame_num]['latitude']), float(gps_list[frame_num]['longitude'])]
+      year = int(gps_list[frame_num]['year'])
+      month = int(gps_list[frame_num]['month'])
+      day = int(gps_list[frame_num]['day'])
+      hour = int(gps_list[frame_num]['hour'])
+      minute = int(gps_list[frame_num]['minute'])
+      second = int(float(gps_list[frame_num]['second']))
+      microsecond = int(round((second % 1) * 1000000,0))
+      if(microsecond == 1):
+        second += 1
+        microsecond = 0
+      datetimestamp = datetime.datetime(year, month, day, hour, minute, second, microsecond)
       label['last_sighting'] = datetimestamp
-      # label['last_sighting'] = gps_list[frame_num]['datetime']
-      label['azimuth'] = gps_list[frame_num]['azimuth']
+      label['azimuth'] = float(gps_list[frame_num]['azimuth']) % 360
       label['user_email'] = email
       label['upload_time'] = upload_time
       label['side'] = side
@@ -186,16 +202,19 @@ def process_labels(labels, frame_num, video_filename, email, upload_time, image_
     label['frame'] = frame_num
     label['original_video_filename'] = video_filename
     label['location'] = [gps_list[frame_num]['latitude'], gps_list[frame_num]['longitude']]
-    year = gps_list[frame_num]['year']
-    month = gps_list[frame_num]['month']
-    day = gps_list[frame_num]['day']
-    hour = gps_list[frame_num]['hour']
-    minute = gps_list[frame_num]['minute']
-    second = gps_list[frame_num]['second']
-    datetimestamp = datetime.datetime(year, month, day, hour, minute, second)
+    year = int(gps_list[frame_num]['year'])
+    month = int(gps_list[frame_num]['month'])
+    day = int(gps_list[frame_num]['day'])
+    hour = int(gps_list[frame_num]['hour'])
+    minute = int(gps_list[frame_num]['minute'])
+    second = int(float(gps_list[frame_num]['second']))
+    microsecond = int(round((second % 1) * 1000000,0))
+    if(microsecond == 1):
+      second += 1
+      microsecond = 0
+    datetimestamp = datetime.datetime(year, month, day, hour, minute, second, microsecond)
     label['last_sighting'] = datetimestamp
-    label['last_sighting'] = gps_list[frame_num]['datetime']
-    label['azimuth'] = gps_list[frame_num]['azimuth']
+    label['azimuth'] = float(gps_list[frame_num]['azimuth']) % 360
     label['user_email'] = email
     label['upload_time'] = upload_time
     label['side'] = side
@@ -207,4 +226,3 @@ def process_labels(labels, frame_num, video_filename, email, upload_time, image_
 
 if __name__ == '__main__':
   main()
- 

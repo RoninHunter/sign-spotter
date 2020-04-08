@@ -26,8 +26,8 @@ class DB():
             image_path = label['image_path']
             image_id = self.fs.put(open(image_path, 'rb'), filename=image_path, filetype='jpeg')
             label['image_id'] = image_id
-        self.coll.insert_many(labels)
-        print('Labels saved to DB')
+            self.coll.insert_one(label)
+
 
         # This code was used for testing purposes. Using the image_id, fs.get will return the binary image data
         # print(image_id)

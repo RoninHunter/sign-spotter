@@ -26,8 +26,8 @@ def split_video(filename, output_dir, fps):
     image_left  = ffmpeg.output(image_left,  os.path.join(output_dir, file + '_%d_image_l.jpg'))
     image_right = ffmpeg.output(image_right, os.path.join(output_dir, file + '_%d_image_r.jpg'))
 
-    # result_left  = ffmpeg.run(image_left)
-    # result_right = ffmpeg.run(image_right)
+    result_left  = ffmpeg.run(image_left)
+    result_right = ffmpeg.run(image_right)
 
     return {'frame_count': frame_count}
 
@@ -145,6 +145,8 @@ def gps_list(filename, fps):
     curHour = -1
     curMinute = -1
     curSecond = -1
+
+    date = []
 
     frameStamp = []
     timeForInterp = []
@@ -309,7 +311,7 @@ def gps_list(filename, fps):
                 #                                  1           3            5            7             8                      
                 #                            frameIndex,     time,    latitude,   longitude,    velocity,      azimuth, day, month, year)
                 jsonGPSlist = json_GPSobj(current_Frame, lineList[1], lineList[3], lineList[5], lineList[7],  lineList[8], day, month, year , str(curHour), str(curMinute), str(curSecond))
-                6
+
                 videoFrameDictionary[current_Frame] = jsonGPSlist.currentFrameData()
                  
     frameStamp.insert(0,0)
@@ -345,6 +347,14 @@ def gps_list(filename, fps):
     interpAzimuth = interpolateGPSpoints(frameStampTup, azimuthTup, current_Frame)
 
     for frame in range(1, len(videoFrameDictionary) + 1):
+        if(not videoFrameDictionary[frame]['day']):
+            videoFrameDictionary[frame]['year'] = date[0]
+            videoFrameDictionary[frame]['month'] = date[1]
+            videoFrameDictionary[frame]['day'] = date[2]
+        elif(videoFrameDictionary[frame]['day'] != date[2]):
+            date[0] = videoFrameDictionary[frame]['year']
+            date[1] = videoFrameDictionary[frame]['month']
+            date[2] = videoFrameDictionary[frame]['day']
         videoFrameDictionary[frame]['latitude']  = str(interpLat[frame - 1])
         videoFrameDictionary[frame]['longitude'] = str(interpLong[frame -1])
         videoFrameDictionary[frame]['velocity']  = str(interpSpeed[frame - 1])
@@ -371,5 +381,9 @@ def frames(filename, fps):
 
 if __name__ == '__main__':
     print('')
-
-   gps_list("/home/lil-as/sign-spotter/backend/uploads/REC_2019_11_14_04_10_49_F.MP4", 10)
+    # filename = '/home/egm42/sign-spotter/backend/uploads/REC_2020_04_04_08_40_13_F.MP4'
+    # output_dir = '/home/egm42/sign-spotter/cnn/jpegs'
+    # fps = 10
+    # x = split_video(filename, output_dir, fps)
+    # print(x)
+    gps_list("/home/egm42/sign-spotter/backend/uploads/REC_2020_04_04_08_40_13_F.MP4", 10)
