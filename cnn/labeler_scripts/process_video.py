@@ -268,7 +268,7 @@ def gps_list(filename, fps):
                 # print(lineList[3])
 
                 longTemp = str(longConverter(lineList[5]))
-                lineList[5] = longTemp[0:9] #+ ' ' + lineList[6]
+                lineList[5] = "-" + longTemp[0:9] #+ ' ' + lineList[6]
                 # print(lineList[5])
 
 
