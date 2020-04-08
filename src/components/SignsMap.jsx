@@ -40,7 +40,7 @@ class Map extends React.PureComponent {
     let message = [sign_class, lat, lng, String(missing), last_sighting]
     this.setState({
       markerLng: lng,
-      markerLat: lat + 0.004,
+      markerLat: lat,
       infoboxMessage: message,
       isInfoboxVisible: !this.state.isInfoboxVisible
     })
