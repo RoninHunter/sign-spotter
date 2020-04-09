@@ -31,10 +31,10 @@ export class HomePage extends Component {
           lineHeight: '25px'
         }}>
 
-      <h1>SignSPOTTER</h1>
+      <h1>signSpotter</h1>
 
          <p>
-           {/* <b>SignSPOTTER </b>  */}
+           {/* <b>SignSpotter </b>  */}
           A tool that allows its users to upload videos for object detection labeling, 
           specifically traffic signs. Users will receive an email after the video is 
           processed to download the labeled data. The app will also allow the user to 

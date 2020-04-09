@@ -2,6 +2,8 @@ var express = require('express');
 var cors = require('cors');
 var bodyParser = require('body-parser');
 var fileUpload = require('express-fileupload');
+var mongoose = require('mongoose');
+var Signs = require('./models/signs');
 
 require('dotenv').config();
 
@@ -15,6 +17,13 @@ app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(cors());
+
+mongoose.connect(process.env.MLAB_URI, {
+  useCreateIndex: true,
+  useFindAndModify: false,
+  useNewUrlParser: true
+});
+mongoose.connection.on('error', console.error.bind(console, 'connection error: '));
 
 app.get('/', async (req, res) => {
   res.send('Server online!');
@@ -89,32 +98,50 @@ app.post('/api/history', function (req, res) {
   }
 });
 
-app.post('/api/locations', function (req, res) {
-  try {
-    // Example response, needs to be replaced with actual connection to DB
-    var test_response = {
-      'locations': [
-        {
-          'latitude': 27.999634,
-          'longitude': -81.957009,
-          'signType': 'signType',
-          'image': 'imageURL'
-        },
-        {
-          'latitude': 27.996470,
-          'longitude': -81.957159,
-          'signType': 'signType',
-          'image': 'imageURL'
-        }
-      ]
-    }
-    res.json(test_response);
-  }
-  catch (e) {
-    console.log(e);
-    res.json({'locations': null});
-  }
+app.get('/api/locations/current', function (req, res) {
+  console.log('testing');
+  Signs.find({'missing': false}, function(err, signs) {
+    console.log("Current:")
+    console.log(signs);
+    res.send(signs);
+  });
 });
+
+app.get('/api/locations/missing', function (req, res) {
+  console.log('testing');
+  Signs.find({'missing': true}, function(err, signs) {
+    console.log('Missing:')
+    console.log(signs);
+    res.send(signs);
+  });
+});
+
+// app.post('/api/locations', function (req, res) {
+//   try {
+//     // Example response, needs to be replaced with actual connection to DB
+//     var test_response = {
+//       'locations': [
+//         {
+//           'latitude': 27.999634,
+//           'longitude': -81.957009,
+//           'signType': 'signType',
+//           'image': 'imageURL'
+//         },
+//         {
+//           'latitude': 27.996470,
+//           'longitude': -81.957159,
+//           'signType': 'signType',
+//           'image': 'imageURL'
+//         }
+//       ]
+//     }
+//     res.json(test_response);
+//   }
+//   catch (e) {
+//     console.log(e);
+//     res.json({'locations': null});
+//   }
+// });
 
 app.listen(port, () => {
   console.log('Application started on port: ', port);
