@@ -32,3 +32,6 @@ cnn/*.txt
 *.jpg
 *.MP4
 *.txt
+
+cnn/models/darknet/*
+cnn/models/tensorflow/*

@@ -28,6 +28,8 @@ def main():
   gps_list = scripts.gps_list(video_filename, fps)
   jpeg_list = []
 
+  imageLabeler = scripts.imageLabeler()
+
   if(gps_list):
     # The last parameter is fps for processing video in to jpegs
     frame_count = scripts.split_video(video_filename, jpeg_dir, fps)
@@ -41,8 +43,8 @@ def main():
       jpeg_list.append(left_img)
       jpeg_list.append(right_img)
 
-      left_labels = scripts.label(left_img)
-      right_labels = scripts.label(right_img)
+      left_labels = imageLabeler.labelDarknet(left_img)
+      right_labels = imageLabeler.labelDarknet(right_img)
 
       left_labels = process_labels(left_labels, frame_num, video_filename, email, upload_time, left_img, gps_list, 'left')
       right_labels = process_labels(right_labels, frame_num, video_filename, email, upload_time, right_img, gps_list, 'right')
