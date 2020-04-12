@@ -83,7 +83,7 @@ class imageLabeler():
         
         return labels
 
-    def labelTensor(self, image_path):
+    def labelTensor(self, image_path, side):
         
         model_location = '/home/egm42/sign-spotter/cnn/models/tensorflow'
         checkpoint = '/home/egm42/sign-spotter/cnn/models/tensorflow/frozen_inference_graph.pb'
@@ -134,14 +134,15 @@ class imageLabeler():
             if(scores[0][n] >= 0.6):
                 label = {
                     'class': self.classes[classes[0][n]],
-                    'ymin': boxes[0][n][0],
-                    'xmin': boxes[0][n][1],
-                    'ymax': boxes[0][n][2],
-                    'xmax': boxes[0][n][3]
+                    'ymin': float(boxes[0][n][0]),
+                    'xmin': float(boxes[0][n][1]),
+                    'ymax': float(boxes[0][n][2]),
+                    'xmax': float(boxes[0][n][3]),
+                    'side': side
                 }
                 box = boxes[0][n]
                 labels.append(label)
-
+        print(image_path, labels)
         # cv2.imwrite(os.path.join(CWD_PATH,"test_images","output_" + IMAGE_NAME),new_image)
 
         return labels

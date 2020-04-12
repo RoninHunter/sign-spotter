@@ -8,20 +8,27 @@ from pathlib import Path
 from bson.son import SON
 from bson.objectid import ObjectId
 
+import time
+
 def main():
   # arguements = sys.argv
   # video_filename = arguements[1]
   # email = arguements[2]
   # upload_time = arguements[3]
+  # user = arguements[4]
 
   jpeg_dir = os.path.join(os.path.dirname(__file__),'jpegs')
   fps = 10
+
+  startTime = time.time()
+  endTime = time.time()
+  print(endTime - startTime)
 
   labels = []
   sign_matrix = {'addedLane': {},'curveLeft': {}, 'curveRight': {}, 'dip': {}, 'doNotEnter': {}, 'keepRight': {}, 'laneEnds': {}, 'merge': {}, 'noLeftTurn': {}, 'noRightTurn': {}, 'pedestrianCrossing': {}, 'rightLaneMustTurn': {}, 'school': {}, 'schoolSpeedLimit25': {}, 'signalAhead': {}, 'slow': {}, 'speedLimit15': {}, 'speedLimit25': {}, 'speedLimit30': {}, 'speedLimit35': {}, 'speedLimit40': {}, 'speedLimit45': {}, 'speedLimit50': {}, 'speedLimit55': {}, 'speedLimit65': {}, 'stop': {}, 'stopAhead': {}, 'yield': {}}
 
   # Temporary
-  video_filename = '/home/egm42/sign-spotter/backend/uploads/REC_2020_04_04_08_40_13_F.MP4'
+  video_filename = '/home/egm42/sign-spotter/backend/uploads/REC_2020_04_04_08_35_13_F.MP4'
   email = 'test@email.com'
   upload_time = datetime.datetime.now()
 
@@ -31,33 +38,32 @@ def main():
   imageLabeler = scripts.imageLabeler()
 
   if(gps_list):
-    print('Entering frame processing')
     # The last parameter is fps for processing video in to jpegs
     frame_count = scripts.split_video(video_filename, jpeg_dir, fps)
     frame_count = len(gps_list)
     
     # Frames start at 1, hence the range(1, frame_count + 1)
     for frame_num in range(1, frame_count + 1):
+      if(frame_num >=550 and frame_num <=558):
+        # left_img = os.path.join(jpeg_dir, Path(video_filename).stem + '_' + str(frame_num) + '_image_l.jpg')
+        right_img = os.path.join(jpeg_dir, Path(video_filename).stem + '_' + str(frame_num) + '_image_r.jpg')
+        # jpeg_list.append(left_img)
+        jpeg_list.append(right_img)
 
-      # left_img = os.path.join(jpeg_dir, Path(video_filename).stem + '_' + str(frame_num) + '_image_l.jpg')
-      right_img = os.path.join(jpeg_dir, Path(video_filename).stem + '_' + str(frame_num) + '_image_r.jpg')
-      # jpeg_list.append(left_img)
-      jpeg_list.append(right_img)
+        # left_labels = imageLabeler.labelDarknet(left_img)
+        right_labels = imageLabeler.labelTensor(right_img, 'right')
 
-      # left_labels = imageLabeler.labelDarknet(left_img)
-      right_labels = imageLabeler.labelTensor(right_img)
+        # left_labels = process_labels(left_labels, frame_num, video_filename, email, upload_time, left_img, gps_list, 'left')
+        right_labels = process_labels(right_labels, frame_num, video_filename, email, upload_time, right_img, gps_list, 'right')
+        # labels += left_labels + right_labels
+        labels += right_labels
 
-      # left_labels = process_labels(left_labels, frame_num, video_filename, email, upload_time, left_img, gps_list, 'left')
-      right_labels = process_labels(right_labels, frame_num, video_filename, email, upload_time, right_img, gps_list, 'right')
-      # labels += left_labels + right_labels
-      labels += right_labels
-
-      # for label in left_labels + right_labels:
-      for label in right_labels:
-        if 'class' in label.keys():
-          if frame_num not in sign_matrix[label['class']].keys():
-            sign_matrix[label['class']][frame_num] = {}
-          sign_matrix[label['class']][frame_num][label['side']] = True
+        # for label in left_labels + right_labels:
+        for label in right_labels:
+          if 'class' in label.keys():
+            if frame_num not in sign_matrix[label['class']].keys():
+              sign_matrix[label['class']][frame_num] = {}
+            sign_matrix[label['class']][frame_num][label['side']] = True
       
   else:
     scripts.send_email('no_gps', email)
@@ -140,19 +146,26 @@ def main():
   # Delete video after processing
   # os.remove(video_filename)
 
+  endTime = time.time()
+  print(endTime - startTime)
+
 def save_label(last_sighting, labels, side):
   signs_db = scripts.DB('signs')
+  print(last_sighting)
+  print(len(labels))
+  # if(side == 'left'):
+  #   label = [labels[last_sighting * 2 - 2]]
+  # else:
+  #   label = [labels[last_sighting * 2 - 1]]
 
-  if(side == 'left'):
-    label = [labels[last_sighting * 2 - 2]]
-  else:
-    label = [labels[last_sighting * 2 - 1]]
-
-  sign_class = label[0]['class']
-  latitude = float(label[0]['location'][0])
-  longitude = float(label[0]['location'][1])
-  azimuth = int(float(label[0]['azimuth']))
-  last_sighting = label[0]['last_sighting']
+  label = labels[last_sighting - 550]
+  # label = labels[last_sighting]
+  print(label)
+  sign_class = label['class']
+  latitude = float(label['location'][0])
+  longitude = float(label['location'][1])
+  azimuth = int(float(label['azimuth']))
+  last_sighting = label['last_sighting']
 
   query = {'class': sign_class, 'location': SON([('$near', [latitude, longitude]), ('$maxDistance', 0.0003)]), 'azimuth': {'$gte': (azimuth - 15) % 360, '$lte': (azimuth + 15) % 360}}
   existing_signs = signs_db.get_data(query)
@@ -174,7 +187,7 @@ def save_label(last_sighting, labels, side):
     signs_db.update_data(existing_id, update)
     
   else:
-    signs_db.save_to_mongo(label)
+    signs_db.save_to_mongo([label])
 
 def process_labels(labels, frame_num, video_filename, email, upload_time, image_path, gps_list, side):
   if(labels):

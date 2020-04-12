@@ -22,13 +22,13 @@ def split_video(filename, output_dir, fps):
 
     image = ffmpeg.filter(image, 'scale', 'iw/2', 'ih/2')
 
-    image_left = ffmpeg.filter(image, 'crop', 'iw*.3', 'ih*.5', '0', 'ih*.1')
+    # image_left = ffmpeg.filter(image, 'crop', 'iw*.3', 'ih*.5', '0', 'ih*.1')
     image_right = ffmpeg.filter(image, 'crop', 'iw*.3', 'ih*.5', 'iw*.7', 'ih*.1')
 
-    image_left  = ffmpeg.output(image_left,  os.path.join(output_dir, file + '_%d_image_l.jpg'))
+    # image_left  = ffmpeg.output(image_left,  os.path.join(output_dir, file + '_%d_image_l.jpg'))
     image_right = ffmpeg.output(image_right, os.path.join(output_dir, file + '_%d_image_r.jpg'))
 
-    result_left  = ffmpeg.run(image_left)
+    # result_left  = ffmpeg.run(image_left)
     result_right = ffmpeg.run(image_right)
 
     return {'frame_count': frame_count}
@@ -385,10 +385,11 @@ def frames(filename, fps):
     return round(float(ffmpeg.probe(filename)['streams'][0]['duration'])*fps)
 
 if __name__ == '__main__':
-    print('')
-    filename = '/home/egm42/sign-spotter/backend/uploads/REC_2020_04_04_08_40_13_F.MP4'
-    output_dir = '/home/egm42/sign-spotter/cnn/jpegs'
-    fps = 10
-    x = split_video(filename, output_dir, fps)
+    # print('')
+    # filename = '/home/egm42/sign-spotter/backend/uploads/REC_2020_04_04_08_40_13_F.MP4'
+    # output_dir = '/home/egm42/sign-spotter/cnn/jpegs'
+    # fps = 10
+    # x = split_video(filename, output_dir, fps)
     # print(x)
-    # gps_list("/home/egm42/sign-spotter/backend/uploads/REC_2020_04_04_08_40_13_F.MP4", 10)
+    x = gps_list("/home/egm42/sign-spotter/backend/uploads/REC_2020_04_04_08_33_13_F.MP4", 10)
+    print(x)

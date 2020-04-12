@@ -5,6 +5,9 @@ var fileUpload = require('express-fileupload');
 var mongoose = require('mongoose');
 var Signs = require('./models/signs');
 
+var fs = require('fs');
+
+
 require('dotenv').config();
 
 const port = process.env.PORT || 8081;
@@ -19,6 +22,7 @@ app.use(bodyParser.urlencoded({
 app.use(cors());
 
 mongoose.connect(process.env.MLAB_URI, {
+  useUnifiedTopology: true,
   useCreateIndex: true,
   useFindAndModify: false,
   useNewUrlParser: true
@@ -30,8 +34,8 @@ app.get('/', async (req, res) => {
 });
 
 app.post('/api/videoupload', function (req, res) {
-  console.log(req.files);
-  console.log(req.body);
+  // console.log(req.files);
+  // console.log(req.body);
   try {
     let date = new Date();
     let currentTime = date.getTime();
@@ -49,17 +53,31 @@ app.post('/api/videoupload', function (req, res) {
     function saveVideos(item, index) {
       let newPath = './uploads/' + currentTime + '_' + item.name + '.mp4';
       item.mv(newPath, function(err) {
+        let filename = './pending/' + currentTime.toString() + item.name + '.json';
+        let info = {
+          filename: item.name,
+          email: req.body.email,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          uploadTime: currentTime.toString(),
+          processed: false
+        };
+        console.log('create json')
+        infoString = JSON.stringify(info);
+        console.log('create infostring')
+        fs.writeFile(filename, infoString);
+        console.log('wrote file')
         if (err) {
           console.log(err);
           response.push('Error saving file');
         }
       });
       // Spawns a child process to run python script
-      const spawn = require('child_process').spawn;
-      const pythonProcess = spawn('python', ['../cnn/labeler.py', item.name, req.body.email, currentTime.toString()]);
-      pythonProcess.stdout.on('data', function(data) {
-        console.log(data.toString());
-      });
+      // const spawn = require('child_process').spawn;
+      // const pythonProcess = spawn('python', ['../cnn/labeler.py', item.name, req.body.email, currentTime.toString()]);
+      // pythonProcess.stdout.on('data', function(data) {
+      //   console.log(data.toString());
+      // });
     }
     res.json({
       'upload': 'success',
