@@ -20,7 +20,7 @@ def split_video(filename, output_dir, fps):
     image = ffmpeg.input(filename)
     image = ffmpeg.filter(image, 'fps', fps = fps)
 
-    image = ffmpeg.filter(image, 'scale', 'iw/4', 'ih/4')
+    image = ffmpeg.filter(image, 'scale', 'iw/2', 'ih/2')
 
     image_left = ffmpeg.filter(image, 'crop', 'iw*.3', 'ih*.5', '0', 'ih*.1')
     image_right = ffmpeg.filter(image, 'crop', 'iw*.3', 'ih*.5', 'iw*.7', 'ih*.1')

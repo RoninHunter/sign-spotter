@@ -31,6 +31,7 @@ def main():
   imageLabeler = scripts.imageLabeler()
 
   if(gps_list):
+    print('Entering frame processing')
     # The last parameter is fps for processing video in to jpegs
     frame_count = scripts.split_video(video_filename, jpeg_dir, fps)
     frame_count = len(gps_list)
@@ -38,19 +39,21 @@ def main():
     # Frames start at 1, hence the range(1, frame_count + 1)
     for frame_num in range(1, frame_count + 1):
 
-      left_img = os.path.join(jpeg_dir, Path(video_filename).stem + '_' + str(frame_num) + '_image_l.jpg')
+      # left_img = os.path.join(jpeg_dir, Path(video_filename).stem + '_' + str(frame_num) + '_image_l.jpg')
       right_img = os.path.join(jpeg_dir, Path(video_filename).stem + '_' + str(frame_num) + '_image_r.jpg')
-      jpeg_list.append(left_img)
+      # jpeg_list.append(left_img)
       jpeg_list.append(right_img)
 
-      left_labels = imageLabeler.labelDarknet(left_img)
-      right_labels = imageLabeler.labelDarknet(right_img)
+      # left_labels = imageLabeler.labelDarknet(left_img)
+      right_labels = imageLabeler.labelTensor(right_img)
 
-      left_labels = process_labels(left_labels, frame_num, video_filename, email, upload_time, left_img, gps_list, 'left')
+      # left_labels = process_labels(left_labels, frame_num, video_filename, email, upload_time, left_img, gps_list, 'left')
       right_labels = process_labels(right_labels, frame_num, video_filename, email, upload_time, right_img, gps_list, 'right')
-      labels += left_labels + right_labels
+      # labels += left_labels + right_labels
+      labels += right_labels
 
-      for label in left_labels + right_labels:
+      # for label in left_labels + right_labels:
+      for label in right_labels:
         if 'class' in label.keys():
           if frame_num not in sign_matrix[label['class']].keys():
             sign_matrix[label['class']][frame_num] = {}
@@ -58,7 +61,8 @@ def main():
       
   else:
     scripts.send_email('no_gps', email)
-
+  
+  print('Processing labels')
   for side in ['left', 'right']:
     for sign in sign_matrix.keys():
       sightings = 0
