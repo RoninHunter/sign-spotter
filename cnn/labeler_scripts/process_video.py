@@ -13,7 +13,9 @@ from scipy import interpolate
 
 
 def split_video(filename, output_dir, fps):
+    print('Splitting video:', filename)
     file = Path(filename).stem
+    print(file)
 
     frame_count = frames(filename, fps)
 
@@ -391,5 +393,5 @@ if __name__ == '__main__':
     # fps = 10
     # x = split_video(filename, output_dir, fps)
     # print(x)
-    x = gps_list("/home/egm42/sign-spotter/backend/uploads/REC_2020_04_04_08_33_13_F.MP4", 10)
+    x = gps_list("/home/egm42/sign-spotter/backend/uploads/REC_2020_04_12_18_19_07_F.MP4", 10)
     print(x)

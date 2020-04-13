@@ -51,26 +51,8 @@ app.post('/api/videoupload', function (req, res) {
     // Iterates though each video and saves to uploads folder as well as calls the python script
     videos.forEach(saveVideos);
     function saveVideos(item, index) {
-      let newPath = './uploads/' + currentTime + '_' + item.name + '.mp4';
+      let newPath = './uploads/' + currentTime.toString() + '_' + item.name;
       item.mv(newPath, function(err) {
-        let filename = './pending/' + currentTime.toString() + item.name + '.json';
-        let info = {
-          filename: item.name,
-          email: req.body.email,
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          uploadTime: currentTime.toString(),
-          processed: false
-        };
-        console.log('create json')
-        infoString = JSON.stringify(info);
-        console.log('create infostring')
-        fs.writeFile(filename, infoString);
-        console.log('wrote file')
-        if (err) {
-          console.log(err);
-          response.push('Error saving file');
-        }
       });
       // Spawns a child process to run python script
       // const spawn = require('child_process').spawn;
@@ -78,6 +60,23 @@ app.post('/api/videoupload', function (req, res) {
       // pythonProcess.stdout.on('data', function(data) {
       //   console.log(data.toString());
       // });
+      let filename = './pending/' + currentTime.toString() + '_' + item.name + '.json';
+      let info = {
+        filename: currentTime + '_' + item.name,
+        originalFilename: item.name,
+        email: req.body.email,
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        uploadTime: currentTime.toString(),
+        processed: false
+      };
+      infoString = JSON.stringify(info);
+      fs.writeFile(filename, infoString, function(err) {
+        if (err) {
+          console.log(err);
+          response.push('Error saving file');
+        }
+      });
     }
     res.json({
       'upload': 'success',

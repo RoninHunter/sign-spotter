@@ -35,3 +35,4 @@ cnn/*.txt
 
 cnn/models/darknet/*
 cnn/models/tensorflow/*
+backend/pending/*json

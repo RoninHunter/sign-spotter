@@ -7,10 +7,74 @@ import os
 from pathlib import Path
 from bson.son import SON
 from bson.objectid import ObjectId
-
 import time
+import json
 
 def main():
+  files = os.listdir(os.path.join(os.getcwd(), 'backend', 'pending'))
+  time.sleep(len(files) * 3)
+  if(files):
+    print('Files to process:', files)
+    for file in files:
+      data = {}
+      jsonpath = os.path.join(os.getcwd(), 'backend', 'pending', file)
+      print('json read:', jsonpath)
+      try:
+        with open(jsonpath) as f:
+          data = json.load(f)
+        print(data)
+        filename = os.path.join(os.getcwd(), 'backend', 'uploads', data['filename'])
+        original_filename = data['originalFilename']
+        email = data['email']
+        first_name = data['firstName']
+        last_name = data['lastName']
+        upload_time = data['uploadTime']
+        processed = data['processed']
+        
+        if(not processed):
+          print('processing video')
+          data['processed'] = True
+          with open(jsonpath, 'w') as f:
+            json.dump(data, f)
+          try:
+            # replace with process function
+            print(filename, email, upload_time, first_name, last_name)
+            response = process(filename, email, upload_time, first_name, last_name)
+            print('Success processing', original_filename)
+            removefile(jsonpath)
+            removefile(filename)
+            time.sleep(3)
+          except:
+            pass
+        else:
+          print('Error processing file', original_filename)
+          #email user
+          errfilename = os.path.join(os.getcwd(), 'backend', 'uploads', os.path.basename(jsonpath).split('.json')[0])
+          removefile(jsonpath)
+          removefile(errfilename)
+          time.sleep(1)
+      except json.JSONDecodeError as e:
+        print('Error processing file', jsonpath)
+        errfilename = os.path.join(os.getcwd(), 'backend', 'uploads', os.path.basename(jsonpath).split('.json')[0])
+        removefile(jsonpath)
+        try:
+          process(errfilename, 'email@email.com', time.time(), 'err', 'vid')
+        except:
+          pass
+        removefile(errfilename)
+        time.sleep(1)
+      
+  else:
+    print('No videos to process')
+    time.sleep(10)
+
+def removefile(filepath):
+  try:
+    os.remove(filepath)
+  except FileNotFoundError as e:
+    print('File does not exist')
+
+def process(filepath, email, upload_time, first_name, last_name):
   # arguements = sys.argv
   # video_filename = arguements[1]
   # email = arguements[2]
@@ -28,48 +92,54 @@ def main():
   sign_matrix = {'addedLane': {},'curveLeft': {}, 'curveRight': {}, 'dip': {}, 'doNotEnter': {}, 'keepRight': {}, 'laneEnds': {}, 'merge': {}, 'noLeftTurn': {}, 'noRightTurn': {}, 'pedestrianCrossing': {}, 'rightLaneMustTurn': {}, 'school': {}, 'schoolSpeedLimit25': {}, 'signalAhead': {}, 'slow': {}, 'speedLimit15': {}, 'speedLimit25': {}, 'speedLimit30': {}, 'speedLimit35': {}, 'speedLimit40': {}, 'speedLimit45': {}, 'speedLimit50': {}, 'speedLimit55': {}, 'speedLimit65': {}, 'stop': {}, 'stopAhead': {}, 'yield': {}}
 
   # Temporary
-  video_filename = '/home/egm42/sign-spotter/backend/uploads/REC_2020_04_04_08_35_13_F.MP4'
-  email = 'test@email.com'
-  upload_time = datetime.datetime.now()
-
+  video_filename = filepath
+  email = email
+  upload_time = upload_time
+  print('gps start')
   gps_list = scripts.gps_list(video_filename, fps)
   jpeg_list = []
+  print('gps end')
 
   imageLabeler = scripts.imageLabeler()
+  print('labler created')
 
   if(gps_list):
+    print('gps exists')
     # The last parameter is fps for processing video in to jpegs
     frame_count = scripts.split_video(video_filename, jpeg_dir, fps)
     frame_count = len(gps_list)
     
     # Frames start at 1, hence the range(1, frame_count + 1)
     for frame_num in range(1, frame_count + 1):
-      if(frame_num >=550 and frame_num <=558):
-        # left_img = os.path.join(jpeg_dir, Path(video_filename).stem + '_' + str(frame_num) + '_image_l.jpg')
-        right_img = os.path.join(jpeg_dir, Path(video_filename).stem + '_' + str(frame_num) + '_image_r.jpg')
-        # jpeg_list.append(left_img)
-        jpeg_list.append(right_img)
+    # if(frame_num >=550 and frame_num <=558):
+    # if(frame_num > 598):
+      # left_img = os.path.join(jpeg_dir, Path(video_filename).stem + '_' + str(frame_num) + '_image_l.jpg')
+      right_img = os.path.join(jpeg_dir, Path(video_filename).stem + '_' + str(frame_num) + '_image_r.jpg')
+      # jpeg_list.append(left_img)
+      # print(right_img)
+      jpeg_list.append(right_img)
+      # print(jpeg_list)
 
-        # left_labels = imageLabeler.labelDarknet(left_img)
-        right_labels = imageLabeler.labelTensor(right_img, 'right')
+      # left_labels = imageLabeler.labelDarknet(left_img)
+      right_labels = imageLabeler.labelTensor(right_img, 'right')
 
-        # left_labels = process_labels(left_labels, frame_num, video_filename, email, upload_time, left_img, gps_list, 'left')
-        right_labels = process_labels(right_labels, frame_num, video_filename, email, upload_time, right_img, gps_list, 'right')
-        # labels += left_labels + right_labels
-        labels += right_labels
+      # left_labels = process_labels(left_labels, frame_num, video_filename, email, upload_time, left_img, gps_list, 'left')
+      right_labels = process_labels(right_labels, frame_num, video_filename, email, upload_time, right_img, gps_list, 'right')
+      # labels += left_labels + right_labels
+      labels += right_labels
 
-        # for label in left_labels + right_labels:
-        for label in right_labels:
-          if 'class' in label.keys():
-            if frame_num not in sign_matrix[label['class']].keys():
-              sign_matrix[label['class']][frame_num] = {}
-            sign_matrix[label['class']][frame_num][label['side']] = True
+      # for label in left_labels + right_labels:
+      for label in right_labels:
+        if 'class' in label.keys():
+          if frame_num not in sign_matrix[label['class']].keys():
+            sign_matrix[label['class']][frame_num] = {}
+          sign_matrix[label['class']][frame_num][label['side']] = True
       
   else:
     scripts.send_email('no_gps', email)
   
   print('Processing labels')
-  for side in ['left', 'right']:
+  for side in ['right']:
     for sign in sign_matrix.keys():
       sightings = 0
       blanks = 0
@@ -105,7 +175,7 @@ def main():
 
   # Delete images from jpegs folder after processing and uploading to DB
   for image in jpeg_list:
-    os.remove(image)
+    removefile(image)
 
   # iterate through all gps points and check if signs have been updated
   print('Processing GPS list')
@@ -143,24 +213,22 @@ def main():
 
         signs_db.update_data(existing_id, update)
 
-  # Delete video after processing
-  # os.remove(video_filename)
-
   endTime = time.time()
   print(endTime - startTime)
 
 def save_label(last_sighting, labels, side):
+  print('Saving label')
   signs_db = scripts.DB('signs')
-  print(last_sighting)
-  print(len(labels))
+  # print(last_sighting)
+  # print(len(labels))
   # if(side == 'left'):
   #   label = [labels[last_sighting * 2 - 2]]
   # else:
   #   label = [labels[last_sighting * 2 - 1]]
 
-  label = labels[last_sighting - 550]
-  # label = labels[last_sighting]
-  print(label)
+  # label = labels[last_sighting - 598]
+  label = labels[last_sighting]
+  # print(label)
   sign_class = label['class']
   latitude = float(label['location'][0])
   longitude = float(label['location'][1])
@@ -183,13 +251,16 @@ def save_label(last_sighting, labels, side):
       'sightings': prev_sight + 1,
       'last_sighting': last_sighting
     }
-
+    print('Updating Mongo')
     signs_db.update_data(existing_id, update)
     
   else:
+    print('Saveing to Mongo')
     signs_db.save_to_mongo([label])
+  print('End of save label')
 
 def process_labels(labels, frame_num, video_filename, email, upload_time, image_path, gps_list, side):
+  print('Processing label')
   if(labels):
     for label in labels:
       label['frame'] = frame_num
@@ -244,4 +315,5 @@ def process_labels(labels, frame_num, video_filename, email, upload_time, image_
     return [label]
 
 if __name__ == '__main__':
-  main()
+  while(True):
+    main()
