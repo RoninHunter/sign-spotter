@@ -121,7 +121,8 @@ def process(filepath, email, upload_time, first_name, last_name):
       # print(jpeg_list)
 
       # left_labels = imageLabeler.labelDarknet(left_img)
-      right_labels = imageLabeler.labelTensor(right_img, 'right')
+      right_labels = imageLabeler.labelDarknet(right_img, 'right')
+      # right_labels = imageLabeler.labelTensor(right_img, 'right')
 
       # left_labels = process_labels(left_labels, frame_num, video_filename, email, upload_time, left_img, gps_list, 'left')
       right_labels = process_labels(right_labels, frame_num, video_filename, email, upload_time, right_img, gps_list, 'right')

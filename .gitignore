@@ -22,16 +22,14 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-backend/.env
+*.env
 *.mp4
-cnn/*.txt
 .sign-spotter/
 .vscode/
 *.pyc
 *.png
 *.jpg
 *.MP4
-*.txt
 
 cnn/models/darknet/*
 cnn/models/tensorflow/*
