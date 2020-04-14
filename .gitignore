@@ -29,6 +29,7 @@ yarn-error.log*
 *.png
 *.jpg
 *.MP4
+*.env
 
 cnn/models/darknet/*
 cnn/models/tensorflow/*
