@@ -12,7 +12,7 @@ import json
 
 def main():
   files = os.listdir(os.path.join(os.getcwd(), 'backend', 'pending'))
-  time.sleep(len(files) * 3)
+  #time.sleep(len(files) * 3)
   if(files):
     print('Files to process:', files)
     for file in files:
@@ -121,8 +121,8 @@ def process(filepath, email, upload_time, first_name, last_name):
       # print(jpeg_list)
 
       # left_labels = imageLabeler.labelDarknet(left_img)
-      right_labels = imageLabeler.labelDarknet(right_img, 'right')
-      # right_labels = imageLabeler.labelTensor(right_img, 'right')
+      # right_labels = imageLabeler.labelDarknet(right_img, 'right')
+      right_labels = imageLabeler.labelTensor(right_img, 'right')
 
       # left_labels = process_labels(left_labels, frame_num, video_filename, email, upload_time, left_img, gps_list, 'left')
       right_labels = process_labels(right_labels, frame_num, video_filename, email, upload_time, right_img, gps_list, 'right')
@@ -318,3 +318,5 @@ def process_labels(labels, frame_num, video_filename, email, upload_time, image_
 if __name__ == '__main__':
   while(True):
     main()
+  #filepath = '/home/egm42/sign-spotter/backend/uploads/REC_2020_04_04_08_35_13_F.MP4'
+  #process(filepath, 'email', 'time', 'firs', 'last')
