@@ -24,7 +24,6 @@ yarn-debug.log*
 yarn-error.log*
 backend/.env
 *.mp4
-cnn/*.txt
 .sign-spotter/
 .vscode/
 *.pyc
@@ -32,3 +31,7 @@ cnn/*.txt
 *.jpg
 *.MP4
 *.txt
+
+.env
+cnn/models/darknet/*
+/cnn/models/darknet/*
