@@ -95,13 +95,13 @@ def process(filepath, email, upload_time, first_name, last_name):
   video_filename = filepath
   email = email
   upload_time = upload_time
-  print('gps start')
-  gps_list = scripts.gps_list(video_filename, fps)
+  try:
+    gps_list = scripts.gps_list(video_filename, fps)
+  except FileNotFoundError as e:
+    scripts.emailSender(email, first_name + '' + last_name,  5)
   jpeg_list = []
-  print('gps end')
 
   imageLabeler = scripts.tensorflowLabeler()
-  print('labler created')
 
   if(gps_list):
     print('gps exists')
@@ -137,7 +137,7 @@ def process(filepath, email, upload_time, first_name, last_name):
           sign_matrix[label['class']][frame_num][label['side']] = True
       
   else:
-    scripts.send_email('no_gps', email)
+    scripts.emailSender(email, first_name + '' + last_name,  5)
   
   print('Processing labels')
   for side in ['right']:
@@ -316,5 +316,7 @@ def process_labels(labels, frame_num, video_filename, email, upload_time, image_
     return [label]
 
 if __name__ == '__main__':
-  while(True):
-    main()
+  # while(True):
+  #   main()
+  
+  process('/home/egm42/sign-spotter/backend/uploads/test_Trim.mp4', 'luisgruiz@ufl.edu', 'time', 'luis', 'ruiz')

@@ -79,6 +79,20 @@ def statusSwitch(statusType, receiversName):
         -Signspotter 
 
         signspotter.com
+        """,
+
+        # Error: No GPS in video file
+        5:
+        "Hello " + receiversName + ",\n"
+        """
+        We at SignSpotter would like to inform you that the video(s) you
+        submitted did not have properly encoded GPS data. Please verify
+        your equipment and try again.
+
+        Thank You 
+        -Signspotter 
+
+        signspotter.com
         """
     }
     return switcher.get(statusType, "Invalide Status!!!")
@@ -89,7 +103,7 @@ def emailSender(receivers, receiversName,  status):
     SMTP_SERVER = "smtp.mail.yahoo.com"
     SMTP_PORT = 587
     SMTP_USERNAME = os.getenv('EMAIL_USER')
-    SMTP_PASSWORD = os.getenv('EMAIL_PASS')
+    SMTP_PASSWORD = os.getenv('EMAIL_PSWD')
     EMAIL_FROM = os.getenv('EMAIL_USER') + '@yahoo.com'
     EMAIL_SUBJECT = "SignSpotter: "
     EMAIL_TO = receivers
@@ -121,5 +135,5 @@ if __name__=='__main__':
     # 3 = Thank you after service is used
     status = 0
 
-    emailSender(receiverList[0], receiverName,  status)
+    emailSender(receiverList[2], receiverName,  status)
 
