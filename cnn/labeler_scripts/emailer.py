@@ -7,6 +7,13 @@ from email.mime.text import MIMEText
 from email.mime.base import MIMEBase 
 from email import encoders 
 
+import os
+from pathlib import Path
+from dotenv import load_dotenv
+
+env_dir = Path(os.path.dirname(__file__)).parent
+env_path = os.path.join(env_dir, '.env')
+load_dotenv(dotenv_path=env_path)
 
 def statusSwitch(statusType, receiversName):
 
@@ -81,10 +88,9 @@ def emailSender(receivers, receiversName,  status):
     from email.mime.text import MIMEText
     SMTP_SERVER = "smtp.mail.yahoo.com"
     SMTP_PORT = 587
-    SMTP_USERNAME = "signspotter"
-    SMTP_PASSWORD = "Covid-19!"
-    SMTP_PASSWORD = "tfpc vnvf aohn tpll"
-    EMAIL_FROM = "signspotter@yahoo.com"
+    SMTP_USERNAME = os.getenv('EMAIL_USER')
+    SMTP_PASSWORD = os.getenv('EMAIL_PASS')
+    EMAIL_FROM = os.getenv('EMAIL_USER') + '@yahoo.com'
     EMAIL_SUBJECT = "SignSpotter: "
     EMAIL_TO = receivers
 

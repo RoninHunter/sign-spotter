@@ -100,7 +100,7 @@ def process(filepath, email, upload_time, first_name, last_name):
   jpeg_list = []
   print('gps end')
 
-  imageLabeler = scripts.imageLabeler()
+  imageLabeler = scripts.tensorflowLabeler()
   print('labler created')
 
   if(gps_list):
