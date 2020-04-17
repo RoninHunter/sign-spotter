@@ -30,6 +30,7 @@ def main():
         last_name = data['lastName']
         upload_time = data['uploadTime']
         processed = data['processed']
+        scripts.emailSender(email, first_name + '' + last_name,  0)
         
         if(not processed):
           print('processing video')
@@ -135,10 +136,9 @@ def process(filepath, email, upload_time, first_name, last_name):
           if frame_num not in sign_matrix[label['class']].keys():
             sign_matrix[label['class']][frame_num] = {}
           sign_matrix[label['class']][frame_num][label['side']] = True
-      
-  else:
-    scripts.emailSender(email, first_name + '' + last_name,  5)
   
+  signs_found = False
+
   print('Processing labels')
   for side in ['right']:
     for sign in sign_matrix.keys():
@@ -155,6 +155,7 @@ def process(filepath, email, upload_time, first_name, last_name):
             # TODO: tweak amount of blank frames and sightings needed to trigger saving of sign
             if(blanks >= 2 and sightings >= 3):
               save_label(last_sighting, labels, side)
+              signs_found = True
               sightings = 0
               last_sighting = 0
         else:
@@ -162,12 +163,18 @@ def process(filepath, email, upload_time, first_name, last_name):
           # TODO: tweak amount of blank frames and sightings needed to trigger saving of sign
           if(blanks >= 2 and sightings >= 3):
             save_label(last_sighting, labels, side)
+            signs_found = True
             sightings = 0
             last_sighting = 0
       # TODO: tweak amount of blank frames and sightings needed to trigger saving of sign
       if(sightings >= 3 and last_sighting != 0):
         save_label(last_sighting, labels, side)
+        signs_found = True
 
+  if(signs_found):
+    scripts.emailSender(email, first_name + '' + last_name,  1)
+  else:
+    scripts.emailSender(email, first_name + '' + last_name,  2)
   # for label in labels:
   #   print('---------------------------------------------------------------')
   #   print(label)
