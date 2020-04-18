@@ -323,7 +323,5 @@ def process_labels(labels, frame_num, video_filename, email, upload_time, image_
     return [label]
 
 if __name__ == '__main__':
-  # while(True):
-  #   main()
-  
-  process('/home/egm42/sign-spotter/backend/uploads/test_Trim.mp4', 'luisgruiz@ufl.edu', 'time', 'luis', 'ruiz')
+  while(True):
+    main()
