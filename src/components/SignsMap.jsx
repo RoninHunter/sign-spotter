@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import DownloadButton from './DownloadButton';
 import GoogleMapComponent from './GoogleMapComponent'
 import axios from 'axios';
 
@@ -72,6 +73,10 @@ class Map extends React.PureComponent {
   render() {
     return (
       <div className="map" style = {styles}>
+
+
+        <DownloadButton />
+
         <GoogleMapComponent
           googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyByBIpxElZbrcCGHnno141apTYc6tbLcoM"
           loadingElement={<div style={{ height: `100%` }} />}
