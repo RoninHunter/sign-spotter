@@ -7,28 +7,40 @@ function simulateNetworkRequest() {
 }
   
 
-function LoadingButton() {
+function DownloadButton() {
   const [isLoading, setLoading] = useState(false);
+
 
   useEffect(() => {
     if (isLoading) {
+    
+    
       simulateNetworkRequest().then(() => {
         setLoading(false);
+        <a href='/public/UserOutputData/data.csv'></a>
       });
+
+
     }
   }, [isLoading]);
 
+
+
   const handleClick = () => setLoading(true);
 
+
+
   return (
+
     <Button
       variant="primary"
       disabled={isLoading}
       onClick={!isLoading ? handleClick : null}
     >
-      {isLoading ? 'Loading your file…' : 'Download .CSV'}
-    </Button>
+      {isLoading ? 'Loading your file…' : 'Download .CSV/KMZ'}
+    </Button> 
+
   );
 }
-  
-render(<LoadingButton />);
+
+export default DownloadButton

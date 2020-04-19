@@ -75,7 +75,7 @@ class Map extends React.PureComponent {
       <div className="map" style = {styles}>
 
 
-        <LoadingButton />
+        <DownloadButton />
 
         <GoogleMapComponent
           googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyByBIpxElZbrcCGHnno141apTYc6tbLcoM"
