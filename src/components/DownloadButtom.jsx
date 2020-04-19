@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect,Component } from 'react';
 import Button from 'react-bootstrap/Button'
 
 
@@ -17,7 +17,6 @@ function DownloadButton() {
     
       simulateNetworkRequest().then(() => {
         setLoading(false);
-        <a href='/public/UserOutputData/data.csv'></a>
       });
 
 
@@ -36,6 +35,7 @@ function DownloadButton() {
       variant="primary"
       disabled={isLoading}
       onClick={!isLoading ? handleClick : null}
+      href='./UserOutputData/data.zip' download='signspotter.zip'
     >
       {isLoading ? 'Loading your file…' : 'Download .CSV/KMZ'}
     </Button> 
