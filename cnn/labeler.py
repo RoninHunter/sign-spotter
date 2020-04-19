@@ -30,7 +30,7 @@ def main():
         last_name = data['lastName']
         upload_time = data['uploadTime']
         processed = data['processed']
-        scripts.emailSender(email, first_name + '' + last_name,  0)
+        # scripts.emailSender(email, first_name + '' + last_name,  0)
         
         if(not processed):
           print('processing video')
@@ -71,7 +71,8 @@ def main():
 
 def removefile(filepath):
   try:
-    os.remove(filepath)
+    print('error')
+    # os.remove(filepath)
   except FileNotFoundError as e:
     print('File does not exist')
 
@@ -122,7 +123,7 @@ def process(filepath, email, upload_time, first_name, last_name):
       # print(jpeg_list)
 
       # left_labels = imageLabeler.labelDarknet(left_img)
-      right_labels = imageLabeler.labelDarknet(right_img, 'right')
+      right_labels = imageLabeler.labelTensorflow(right_img, 'right')
       # right_labels = imageLabeler.labelTensor(right_img, 'right')
 
       # left_labels = process_labels(left_labels, frame_num, video_filename, email, upload_time, left_img, gps_list, 'left')
