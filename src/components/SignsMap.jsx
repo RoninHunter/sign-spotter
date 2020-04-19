@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import DownloadButton from './DownloadButton';
+import DownloadButton from './DownloadButtom';
 import GoogleMapComponent from './GoogleMapComponent'
 import axios from 'axios';
 
@@ -75,13 +75,13 @@ class Map extends React.PureComponent {
       <div className="map" style = {styles}>
 
 
-        <DownloadButton />
+        <DownloadButton/>
 
         <GoogleMapComponent
           googleMapURL="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyByBIpxElZbrcCGHnno141apTYc6tbLcoM"
-          loadingElement={<div style={{ height: `100%` }} />}
+          loadingElement={<div style={{ height: `90%` }} />}
           containerElement={<div style={{ height: `100%` }} />}
-          mapElement={<div style={{ height: `100%` }} />}
+          mapElement={<div style={{ height: `90%` }} />}
           
           mapDefaults={this.state.mapDefaults}
           isInfoboxVisible={this.state.isInfoboxVisible}
